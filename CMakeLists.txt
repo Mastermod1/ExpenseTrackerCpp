@@ -2,27 +2,12 @@ project(ExpenseTracker)
 cmake_minimum_required(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(app src/main.cpp)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+include_directories(src)
 
-enable_testing()
+add_subdirectory(src)
+add_subdirectory(lib/googletest)
+add_subdirectory(test)
 
-add_executable(
-  hello_test
-  test/gtest_test.cpp
-)
-target_link_libraries(
-  hello_test
-  GTest::gtest_main
-)
-
-include(GoogleTest)
-gtest_discover_tests(hello_test)
+# CMake configuration: https://raymii.org/s/tutorials/Cpp_project_setup_with_cmake_and_unit_tests.html

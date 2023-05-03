@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
 
 #if __linux__
     #define CLEAR "clear"
