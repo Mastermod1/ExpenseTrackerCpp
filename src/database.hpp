@@ -1,9 +1,19 @@
 #pragma once
 
-#include <iostream>
+#include <fstream>
+#include <memory>
+#include <IDatabaseSource.hpp>
 
+namespace db
+{
 class Database
 {
 public:
-    void print();
+    Database(IDatabaseSourcePtr dbSource);
+
+    void insert(std::string data);
+    std::string get();
+private:
+    IDatabaseSourcePtr databaseSource;
 };
+}  // namespace db
