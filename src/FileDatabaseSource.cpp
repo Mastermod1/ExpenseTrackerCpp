@@ -1,7 +1,6 @@
 #include "FileDatabaseSource.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <string>
 
 namespace db::filedb
@@ -17,11 +16,7 @@ std::string FileDatabaseSource::read(int lineNumber)
 {
     std::fstream file;
     file.open("database.txt", std::fstream::in);
-    if (!file.eof())
-    {
-	lastLine++;
-    }
-    if (lineNumber > lastLine)
+    if (lineNumber > lineCount)
     {
 	return "";
     }
@@ -39,8 +34,13 @@ void FileDatabaseSource::write(std::string data)
     if (file.is_open())
     {
 	file << data << "\n";
+	lineCount++;
     }
     file.close();
 }
 
+unsigned FileDatabaseSource::getLineCount()
+{
+    return lineCount;
+}
 }  // namespace db::filedb

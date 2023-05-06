@@ -12,8 +12,10 @@ public:
 
     std::string read(int lineNumber) override;
     void write(std::string data) override;
+
+    unsigned getLineCount();
 private:
-    unsigned lastLine = 0;
+    unsigned lineCount = 0;
 };
 
 }  // namespace db::filedb
