@@ -8,8 +8,8 @@ namespace db
 class IDatabaseSource
 {
 public:
-    virtual std::string read() = 0;
-    virtual void write(std::string) = 0;
+    virtual std::string read(int lineNumber) = 0;
+    virtual void write(std::string data) = 0;
 
     virtual ~IDatabaseSource() = default;
 };

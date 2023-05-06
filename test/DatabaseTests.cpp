@@ -1,9 +1,6 @@
-#include <cstdlib>
-#include <fstream>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <memory>
-#include <unistd.h>
 
 #include "IDatabaseSource.hpp"
 #include "database.hpp"
@@ -17,10 +14,10 @@ class DatabaseSourceMock : public db::IDatabaseSource
 {
 public:
     MOCK_METHOD(void, write, (std::string), (override));
-    MOCK_METHOD(std::string, read, (), (override));
+    MOCK_METHOD(std::string, read, (int), (override));
 };
 
-class DatabaseShould : public ::testing::Test
+class DatabaseShould : public Test
 {
 public:
     DatabaseShould() : sut(dbSource) {}
@@ -34,8 +31,8 @@ TEST_F(DatabaseShould, ReadFromDatabase)
 {   
     const std::string sampleDbReturn = "ROW";
 
-    EXPECT_CALL(*dbSource, read()).WillOnce(Return(sampleDbReturn));
-    EXPECT_EQ(sut.get(), sampleDbReturn);
+    EXPECT_CALL(*dbSource, read(_)).WillOnce(Return(sampleDbReturn));
+    EXPECT_EQ(sut.get(0), sampleDbReturn);
 }
 
 TEST_F(DatabaseShould, WriteToDatabase)

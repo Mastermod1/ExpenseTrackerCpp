@@ -1,8 +1,5 @@
 #include "database.hpp"
 
-#include <iostream>
-#include <fstream>
-
 namespace db
 {
 Database::Database(IDatabaseSourcePtr dbSource)
@@ -13,8 +10,8 @@ void Database::insert(std::string data)
     databaseSource->write(data);
 }
 
-std::string Database::get()
+std::string Database::get(int lineNumber)
 {
-    return databaseSource->read();
+    return databaseSource->read(lineNumber);
 }
 }  // namespace db

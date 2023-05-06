@@ -1,7 +1,5 @@
 #pragma once
 
-#include <fstream>
-#include <memory>
 #include <IDatabaseSource.hpp>
 
 namespace db
@@ -12,7 +10,7 @@ public:
     Database(IDatabaseSourcePtr dbSource);
 
     void insert(std::string data);
-    std::string get();
+    std::string get(int lineNumber);
 private:
     IDatabaseSourcePtr databaseSource;
 };
