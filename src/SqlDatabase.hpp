@@ -1,56 +1,15 @@
-#include <cstdlib>
-#include <gtest/gtest.h>
-#include <iostream>
 #include <sqlite3.h>
+#include <DataTypes/Row.hpp>
+#include <Database.hpp>
+#include <string>
+#include <iostream>
 
-namespace tracker::ut
+namespace tracker::database
 {
-struct Row
-{
-    float cash = 0;
-};
-
-struct LocalDataBase
-{
-    LocalDataBase(int rowCount) : size(rowCount)
-    {
-        rows = new Row[size];
-    }
-
-    ~LocalDataBase()
-    {
-        delete [] rows;
-    }
-
-    int getLastId()
-    {
-        return lastItemId;
-    }
-
-    void incrementLastId()
-    {
-        lastItemId++;
-    }
-
-    Row* getRows()
-    {
-        return rows;
-    }
-
-    bool isEmpty()
-    {
-        return size == 0;
-    }
-
-    int size = 0;
-    int lastItemId = 0;
-    Row* rows;
-};
-
-class Database
+class SqlDatabase : public Database
 {
 public:
-    Database()
+    SqlDatabase()
     {
         std::string tableQuery = "CREATE TABLE IF NOT EXISTS " + tableName + "("
                                  "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -74,7 +33,7 @@ public:
         sqlite3_close(db);
     }
 
-    bool insert(std::string values)
+    bool insert(const std::string& values)
     {
         std::string insertQuery = "INSERT INTO " + tableName + " VALUES(" + values + ")";
 
@@ -89,6 +48,11 @@ public:
 
         sqlite3_close(db);
         return exit == SQLITE_OK;
+    }
+
+    bool insert(const datatypes::Row& row)
+    {
+        return insert("NULL, '" + row.name + "', '" + row.date + "', " + std::to_string(row.cash));
     }
     
     void printWhole()
@@ -111,21 +75,17 @@ public:
         sqlite3_close(db);
     }
 
-    LocalDataBase* select()
+    template <typename Data>
+    datatypes::ContainerWrapper<Data>* select()
     {
         std::string query = "SELECT * FROM " + tableName;
         
-        LocalDataBase* localDb = new LocalDataBase(countSelectedRows()); 
+        datatypes::ContainerWrapper<Data>* localDb = new datatypes::ContainerWrapper<Data>(); 
 
         int exit = sqlite3_open(databaseFileName.c_str(), &db);
-        const auto callback = []([[maybe_unused]]void* data, int argc, char** argv, [[maybe_unused]]char** azColName){ 
-            LocalDataBase* localDb = (LocalDataBase*)data;
-            for(int i = 0; i < argc; i++)
-            {
-                if(i == 3)
-                    (localDb->getRows())[localDb->getLastId()].cash = std::stof(argv[i]);
-            }
-            localDb->incrementLastId();
+        const auto callback = []([[maybe_unused]]void* data, [[maybe_unused]]int argc, char** argv, [[maybe_unused]]char** azColName){ 
+            datatypes::ContainerWrapper<Data>* localDb = (datatypes::ContainerWrapper<Data>*)data;
+            localDb->rows.push_back({argv[1], argv[2], std::stof(argv[3])});
             return 0;
         };
 
@@ -169,7 +129,7 @@ public:
         return isTableGood;
     }
 
-    ~Database()
+    ~SqlDatabase()
     {
     }
 private:
@@ -178,67 +138,4 @@ private:
     std::string tableName = "EXPENSES";
     std::string databaseFileName = "data.db";
 };
-
-class DatabaseWrapperShould : public ::testing::Test
-{
-public:
-    ~DatabaseWrapperShould()
-    {
-        std::system("rm data.db");
-    }
-};
-
-TEST_F(DatabaseWrapperShould, CreateItself)
-{
-    Database db;
-    EXPECT_TRUE(db.isTableAvaiable());
-}
-
-TEST_F(DatabaseWrapperShould, InsertData)
-{
-    Database db;
-    EXPECT_TRUE(db.insert("NULL, 'Nazwa', '2002-03-16', 900.9"));
-}
-
-TEST_F(DatabaseWrapperShould, Return0RowCountIfNoRowsInDB)
-{
-    Database db;
-
-    const auto count = db.countSelectedRows();
-    ASSERT_EQ(count, 0);
-}
-
-TEST_F(DatabaseWrapperShould, ReturnRowCountWithSelectedRows)
-{
-    Database db;
-    db.insert("NULL, 'Nazwa', '2002-03-16', 21.37");
-    db.insert("NULL, 'Nazwa', '2002-03-16', 1.0");
-    db.insert("NULL, 'Nazwa', '2002-03-16', 1.0");
-    db.insert("NULL, 'Nazwa', '2002-03-16', 1.0");
-    db.insert("NULL, 'Nazwa', '2002-03-16', 1.0");
-    db.insert("NULL, 'Nazwa', '2002-03-16', 1.0");
-    db.insert("NULL, 'Nazwa', '2002-03-16', 1.0");
-
-    const auto count = db.countSelectedRows();
-    ASSERT_EQ(count, 7);
-}
-
-TEST_F(DatabaseWrapperShould, ReturnEmptyLocalDatabase)
-{
-    Database db;
-
-    const auto localDb = db.select();
-    ASSERT_TRUE(localDb->isEmpty());
-    delete localDb;
-}
-
-TEST_F(DatabaseWrapperShould, ReturnLocalDatabaseWithSelectedRow)
-{
-    Database db;
-    db.insert("NULL, 'Nazwa', '2002-03-16', 21.37");
-
-    const auto localDb = db.select();
-    ASSERT_FLOAT_EQ(localDb->getRows()[0].cash, 21.37);
-    delete localDb;
-}
-}  // namesapce tracker::ut
+}  // namespace tracker::database
