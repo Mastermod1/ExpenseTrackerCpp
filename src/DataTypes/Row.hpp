@@ -1,4 +1,8 @@
+#pragma once
+
 #include <string>
+#include <ostream>
+#include <vector>
 
 namespace tracker::datatypes
 {
@@ -12,6 +16,8 @@ struct Row
     {
         return name == rhs.name && date == rhs.date && cash == rhs.cash;
     }
+
+    static constexpr const char* fieldNames = "Name;Date;Cash";
 };
 
 std::ostream& operator << (std::ostream& os, const Row& row)

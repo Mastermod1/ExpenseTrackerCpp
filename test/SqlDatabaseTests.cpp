@@ -51,7 +51,7 @@ TEST_F(SqlDatabaseShould, ReturnEmptyLocalDatabase)
 {
     SqlDatabase db;
 
-    const auto localDb = db.select<datatypes::Row>();
+    const auto localDb = db.select();
     ASSERT_TRUE(localDb->isEmpty());
     delete localDb;
 }
@@ -61,7 +61,7 @@ TEST_F(SqlDatabaseShould, ReturnLocalDatabaseWithSelectedRow)
     SqlDatabase db;
     db.insert("NULL, 'Nazwa', '2002-03-16', 21.37");
 
-    const auto localDb = db.select<datatypes::Row>();
+    const auto localDb = db.select();
     const auto result = localDb->getRows();
 
     ASSERT_EQ(result[0].name, "Nazwa");
@@ -78,7 +78,7 @@ TEST_F(SqlDatabaseShould, ReturnLocalDatabaseWithSelectedMultipleRows)
     db.insert("NULL, 'Nazwa2', '2002-03-16', 20.37");
     db.insert("NULL, 'Nazwa3', '2002-03-16', 19.37");
 
-    const auto localDb = db.select<datatypes::Row>();
+    const auto localDb = db.select();
     
     ASSERT_THAT(
         localDb->getRows(), 
@@ -96,7 +96,7 @@ TEST_F(SqlDatabaseShould, InsertRowWithRowObject)
     for(const auto& row : rows)
         db.insert(row);
 
-    const auto localDb = db.select<datatypes::Row>();
+    const auto localDb = db.select();
     
     ASSERT_THAT(localDb->getRows(), UnorderedElementsAre(rows[0], rows[1]));
     delete localDb;

@@ -1,7 +1,7 @@
+#pragma once
+
 #include <sqlite3.h>
-#include <DataTypes/Row.hpp>
 #include <Database.hpp>
-#include <string>
 #include <iostream>
 
 namespace tracker::database
@@ -75,16 +75,15 @@ public:
         sqlite3_close(db);
     }
 
-    template <typename Data>
-    datatypes::ContainerWrapper<Data>* select()
+    datatypes::ContainerWrapper<datatypes::Row>* select()
     {
         std::string query = "SELECT * FROM " + tableName;
         
-        datatypes::ContainerWrapper<Data>* localDb = new datatypes::ContainerWrapper<Data>(); 
+        datatypes::ContainerWrapper<datatypes::Row>* localDb = new datatypes::ContainerWrapper<datatypes::Row>(); 
 
         int exit = sqlite3_open(databaseFileName.c_str(), &db);
         const auto callback = []([[maybe_unused]]void* data, [[maybe_unused]]int argc, char** argv, [[maybe_unused]]char** azColName){ 
-            datatypes::ContainerWrapper<Data>* localDb = (datatypes::ContainerWrapper<Data>*)data;
+            datatypes::ContainerWrapper<datatypes::Row>* localDb = (datatypes::ContainerWrapper<datatypes::Row>*)data;
             localDb->rows.push_back({argv[1], argv[2], std::stof(argv[3])});
             return 0;
         };
