@@ -20,7 +20,7 @@ struct Row
     static constexpr const char* fieldNames = "Name;Date;Cash";
 };
 
-std::ostream& operator << (std::ostream& os, const Row& row)
+inline std::ostream& operator << (std::ostream& os, const Row& row)
 {
     return os << "Name: " << row.name << ", Date: " << row.date << ", Value: " << row.cash;
 }
