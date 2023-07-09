@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_compile_options(-Wall -Wextra -Wpedantic -Wunused -std=c++1z)
+add_compile_options(-Wall -Wextra -Wpedantic -Wunused -std=c++17)
 
 include_directories(src)
 
