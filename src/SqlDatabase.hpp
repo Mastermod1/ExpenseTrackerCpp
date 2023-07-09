@@ -10,10 +10,10 @@ class SqlDatabase : public Database
 public:
     SqlDatabase();
     
-    bool insert(const std::string& values);
+    bool insert(const std::string& values) override;
     bool insert(const datatypes::Row& row);
-    void printWhole();
-    datatypes::ContainerWrapper<datatypes::Row>* select();
+    void printWhole() override;
+    datatypes::ContainerWrapper<datatypes::Row>* select() override;
     int countSelectedRows();
     bool isTableAvaiable();
     

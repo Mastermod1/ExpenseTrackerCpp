@@ -3,94 +3,100 @@
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
-#include <thread>
-#include <iomanip>
-#include <chrono>
+#include <ncurses.h>
+#include <string>
 
-#if __linux__
-    #define CLEAR "clear"
-#else
-    #define CLEAR "cls"
-#endif
-
-using namespace std::chrono_literals;
-
-void clearConsole()
+class TuiView
 {
-    std::system(CLEAR);
-}
-
-std::string fieldNameParser(const char* fieldNames, const int ith)
-{
-    std::string result = "";
-    int occurences = -1;
-    for(int i = 0; fieldNames[i] != '\0'; i++)
+public:
+    TuiView()
     {
-	if(fieldNames[i] == ';')
+	initscr();
+	getmaxyx(stdscr, height, width);
+	start_color();
+	use_default_colors();
+	init_pair(1, COLOR_BLACK, COLOR_WHITE);
+	// attron(COLOR_PAIR(1));
+    }
+
+    void initDisplayLoop()
+    {
+	int key = 0;
+	while (key != 'q')
 	{
-	    occurences++;
-	    if(ith == occurences)
-		return result;
-	    result = "";
+	    drawMenu();
+	    refresh();
+	    key = getch();
+	    if (key == 66) // UP
+		highlight++;
+	    if (key == 65) // DOWN
+		highlight--;
+	    if (key == 10) // ENTER
+	    {
+		switch(highlight)
+		{
+		    case 3:
+			key = 'q';
+			break;
+		    default:
+			key = '0';
+			break;
+		}
+	    }
+
+	    printw(std::to_string(key).c_str());
+	    mvprintw(1, 0, std::to_string(highlight).c_str());
 	}
-	else
+    }
+
+    void drawMenu()
+    {
+	for(int i = 0; i < 4; i++)
 	{
-	    result += fieldNames[i];
+	    if(clampedHighlightPos() == i)
+	    {
+		wattron(stdscr, A_REVERSE);
+		mvprintw(height/2 + i, width/2, menuFields[i]);
+		wattroff(stdscr, A_REVERSE);
+	    }
+	    else
+	    {
+		mvprintw(height/2 + i, width/2, menuFields[i]);
+	    }
 	}
+	move(0, 0);
     }
-    return result;
-}
 
-bool menu(tracker::database::Database& db)
-{
-    std::cout << "----MENU----\n"; 
-    std::cout << "  1. Add expense\n";
-    std::cout << "  2. Show raport\n";
-    std::cout << "  3. Exit\n";
-    
-    int option = 0;
-    std::cin >> option;
-
-    if (option != 1 and option != 2)
+    int clampedHighlightPos()
     {
-	return false;
+	if(highlight >= 4)
+	    highlight = 0;
+	if(highlight < 0)
+	    highlight = 3;
+	return highlight;
     }
 
-    if (option == 1)
+    ~TuiView()
     {
-	// for(int i = 0; i < 101; i++)
-	// {
-	//     std::cout << "|" << std::left << std::setw(100) << std::string(i, '-') << "|" << i << "%" << std::flush;
-	//     std::cout << std::string(100 + 6, '\b');
-	//     std::this_thread::sleep_for(500ms);
-	// }
-	std::vector<std::string> params;
-	std::string xd = "XD";
-	for(int i = 0; i < 3; i++)
-	{
-	    std::string str;
-	    printf("Please insert %s:\n", fieldNameParser(tracker::datatypes::Row::fieldNames, i).c_str());
-	    std::cin >> str;
-	    params.push_back(str);
-	}
-	db.insert("NULL, '" + params[0] + "', '" + params[1] + "', " + params[2]);
+	endwin();
     }
-
-    if (option == 2)
-    {
-	db.printWhole();
-	std::this_thread::sleep_for(9500ms);
-    }
-
-    return true;
-}
+private:
+    int highlight = 0;
+    int width = 0;
+    int height = 0;
+    char* menuFields[4] = {
+	"MENU",	
+	"ADD ROW",	
+	"DISPLAY DATABASE",	
+	"EXIT",	
+    };
+};
 
 int main()
 {
+    TuiView display;
+    display.initDisplayLoop();
+
     tracker::database::SqlDatabase db;
-    clearConsole();
-    while(menu(db))
-    {
-	clearConsole();
-    }
+
 }
