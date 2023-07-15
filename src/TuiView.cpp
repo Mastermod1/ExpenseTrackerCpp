@@ -15,64 +15,39 @@ TuiView::TuiView(
     start_color();
     use_default_colors();
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    viewStateFactory = std::make_shared<state::ViewStateFactory>(height, width);
     // attron(COLOR_PAIR(1));
 }
 
 void TuiView::initDisplayLoop()
 {
-    int key = 0;
-    while (key != 'q')
+    viewState = viewStateFactory->createMenuViewState();
+    while (true)
     {
-	drawMenu();
+	if (viewState->getState() == state::State::Exit)
+	{
+	    break;
+	}
+
+	viewState->draw();
 	refresh();
-	key = getch();
-	if (key == 66) // UP
-	    highlight++;
-	if (key == 65) // DOWN
-	    highlight--;
-	if (key == 10) // ENTER
-	{
-	    switch(highlight)
-	    {
-		case 3:
-		    key = 'q';
-		    break;
-		default:
-		    key = '0';
-		    break;
-	    }
-	}
-
-	printw(std::to_string(key).c_str());
-	mvprintw(1, 0, std::to_string(highlight).c_str());
+	handleControls();
+	printw(std::to_string(keyState).c_str());
+	mvprintw(1, 0, std::to_string(viewState->getState()).c_str());
     }
 }
 
-void TuiView::drawMenu()
+void TuiView::handleControls()
 {
-    for(int i = 0; i < 4; i++)
+    keyState = getch();
+    if (keyState == 66) // UP
+	viewState->moveCursor(1);
+    if (keyState == 65) // DOWN
+	viewState->moveCursor(-1);
+    if (keyState == 10) // ENTER
     {
-	if(clampedHighlightPos() == i)
-	{
-	    wattron(stdscr, A_REVERSE);
-	    mvprintw(height/2 + i, width/2, menuFields[i]);
-	    wattroff(stdscr, A_REVERSE);
-	}
-	else
-	{
-	    mvprintw(height/2 + i, width/2, menuFields[i]);
-	}
+	viewState = viewState->nextState();
     }
-    move(0, 0);
-}
-
-int TuiView::clampedHighlightPos()
-{
-    if(highlight >= 4)
-	highlight = 0;
-    if(highlight < 0)
-	highlight = 3;
-    return highlight;
 }
 
 TuiView::~TuiView()

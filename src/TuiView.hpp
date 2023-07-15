@@ -1,6 +1,8 @@
 #pragma once
 
+#include "ViewStates/ViewStateBuilder.hpp"
 #include <memory>
+#include <IViewState.hpp>
 
 namespace tracker::database
 {
@@ -22,24 +24,18 @@ public:
         std::shared_ptr<database::SqlDatabase> model);
 
     void initDisplayLoop();
-    void drawMenu();
-    int clampedHighlightPos();
+    void handleControls();
 
     ~TuiView();
     
 private:
     std::shared_ptr<controller::TuiController> controller;
     std::shared_ptr<database::SqlDatabase> model;
-    
-    int highlight = 0;
+    state::IViewStatePtr viewState;
+    state::ViewStateFactoryPtr viewStateFactory;
+    int keyState = 0;
     int width = 0;
     int height = 0;
-    char* menuFields[4] = {
-	"MENU",	
-	"ADD ROW",	
-	"DISPLAY DATABASE",	
-	"EXIT",	
-    };
 };
 
 }  // namespace tracker::view
