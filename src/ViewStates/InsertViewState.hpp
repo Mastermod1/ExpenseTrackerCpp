@@ -2,7 +2,7 @@
 
 #include <IViewState.hpp>
 #include <vector>
-#include <string>
+#include <ViewStates/Types/Field.hpp>
 
 namespace tracker::view::state
 {
@@ -17,12 +17,12 @@ public:
     std::shared_ptr<IViewState> nextState() override;
 private:
     int clampedHighlightPos();
+    void readLine();
     const ViewStateFactory& viewStateFactory;
     int height;
     int width;
-    std::vector<std::string> menuFields{"--INSERT ROW--", "Dummy", "Back"};
-    int fieldCount = menuFields.size();
-    State state = State::Insert;
+    std::vector<types::Field> fields{{"--INSERT ROW--"}, {"", true}, {"Back"}};
+    int fieldCount = fields.size();
 };
 
 using InsertViewStatePtr = std::shared_ptr<InsertViewState>;

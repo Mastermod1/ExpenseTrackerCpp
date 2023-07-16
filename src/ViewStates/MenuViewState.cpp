@@ -1,6 +1,9 @@
 #include "ViewStates/ViewStateBuilder.hpp"
 #include <IViewState.hpp>
 #include <ncurses.h>
+#include <Helpers/NcursesPrintHelpers.hpp>
+
+using tracker::helpers::mvprintw;
 
 namespace tracker::view::state
 {
@@ -16,21 +19,19 @@ MenuViewState::MenuViewState(
 void MenuViewState::draw()
 {
     wclear(stdscr);
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < fieldCount; i++)
     {
-	const auto& field = menuFields[i].c_str();
 	if(clampedHighlightPos() == i)
 	{
 	    wattron(stdscr, A_REVERSE);
-	    mvprintw(height/2 + i, width/2, field);
+	    mvprintw(height/2 + i, width/2, fields[i].text);
 	    wattroff(stdscr, A_REVERSE);
 	}
 	else
 	{
-	    mvprintw(height/2 + i, width/2, field);
+	    mvprintw(height/2 + i, width/2, fields[i].text);
 	}
     }
-    // move(0, 0);
     curs_set(0);
 }
 
@@ -50,10 +51,10 @@ std::shared_ptr<IViewState> MenuViewState::nextState()
 
 int MenuViewState::clampedHighlightPos()
 {
-    if(cursor >= 4)
+    if(cursor >= fieldCount)
 	cursor = 0;
     if(cursor < 0)
-	cursor = 3;
+	cursor = fieldCount - 1;
     return cursor;
 }
 }

@@ -1,5 +1,9 @@
 #include <ncurses.h>
 #include <ViewStates/ViewStateBuilder.hpp>
+#include <string>
+#include <Helpers/NcursesPrintHelpers.hpp>
+
+using tracker::helpers::mvprintw;
 
 namespace tracker::view::state
 {
@@ -9,24 +13,57 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
     setStateEnum(State::Insert);
 }
 
+void InsertViewState::readLine()
+{
+    std::string line = fields[1].text;
+    int key = getch();
+    while(key != 10)
+    {
+	if(key == 66)
+	{
+	    moveCursor(1);
+	    draw();
+	    return;
+	}
+	if(key == 65)
+	{
+	    moveCursor(-1);
+	    draw();
+	    return;
+	}
+	if(key == 127)
+	{
+	    line = line.substr(0, line.size() - 1);
+	}
+	else {
+	    line += key;
+	}
+	key = getch();
+    }
+    fields[1].text = line;
+    moveCursor(1);
+    draw();
+}
+
 void InsertViewState::draw()
 {
     wclear(stdscr);
+    const auto cursorPos = clampedHighlightPos();
     for(int i = 0; i < fieldCount; i++)
     {
-	const auto& field = menuFields[i].c_str();
-	if(clampedHighlightPos() == i)
+	if(cursorPos == i)
 	{
 	    wattron(stdscr, A_REVERSE);
-	    mvprintw(height/2 + i, width/2, field);
+	    mvprintw(height/2 + i, width/2, fields[i].text);
 	    wattroff(stdscr, A_REVERSE);
 	}
 	else
 	{
-	    mvprintw(height/2 + i, width/2, field);
+	    mvprintw(height/2 + i, width/2, fields[i].text);
 	}
     }
-    // move(0, 0);
+    if(cursorPos == 1)
+	readLine();
     curs_set(0);
 }
 

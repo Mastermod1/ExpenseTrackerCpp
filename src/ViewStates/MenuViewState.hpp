@@ -2,7 +2,7 @@
 
 #include <IViewState.hpp>
 #include <vector>
-#include <string>
+#include <ViewStates/Types/Field.hpp>
 
 namespace tracker::view::state
 {
@@ -22,8 +22,8 @@ private:
     const ViewStateFactory& viewStateFactory;
     int height;
     int width;
-    std::vector<std::string> menuFields{"--MENU--", "Insert row", "Display database", "Exit"};
-    int fieldCount = menuFields.size();
+    std::vector<types::Field> fields{{"--MENU--"}, {"Insert row"}, {"Display database"}, {"Exit"}};
+    int fieldCount = fields.size();
 };
 
 using MenuViewStatePtr = std::shared_ptr<MenuViewState>;

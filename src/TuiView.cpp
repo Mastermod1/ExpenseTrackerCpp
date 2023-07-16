@@ -32,8 +32,8 @@ void TuiView::initDisplayLoop()
 	viewState->draw();
 	refresh();
 	handleControls();
-	printw(std::to_string(keyState).c_str());
-	mvprintw(1, 0, std::to_string(viewState->getState()).c_str());
+	printw("%s", std::to_string(keyState).c_str());
+	mvprintw(1, 0, "%s", std::to_string(viewState->getState()).c_str());
     }
 }
 
