@@ -8,7 +8,5 @@ struct Field
 {
     std::string text = "......";
     bool isInsert = false;
-    int row = 0;
-    int col = 0;
 };
 }

@@ -11,7 +11,6 @@ enum State{
     Exit
 };
 
-
 class IViewState
 {
 public:
