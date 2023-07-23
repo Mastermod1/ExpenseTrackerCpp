@@ -16,7 +16,6 @@ public:
 	setStateEnum(State::Exit);
     }
 
-    void draw() override { wclear(stdscr); }
     std::shared_ptr<IViewState> nextState() override 
     {
 	return std::make_shared<ExitViewState>(*this);

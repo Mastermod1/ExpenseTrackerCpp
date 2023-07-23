@@ -1,3 +1,4 @@
+#include "IViewState.hpp"
 #include <TuiView.hpp>
 
 #include <string>
@@ -22,29 +23,7 @@ TuiView::TuiView(
 void TuiView::initDisplayLoop()
 {
     viewState = viewStateFactory->createMenuViewState();
-    while (true)
-    {
-	if (viewState->getState() == state::State::Exit)
-	{
-	    break;
-	}
-
-	viewState->draw();
-	refresh();
-	handleControls();
-	printw("%s", std::to_string(keyState).c_str());
-	mvprintw(1, 0, "%s", std::to_string(viewState->getState()).c_str());
-    }
-}
-
-void TuiView::handleControls()
-{
-    keyState = getch();
-    if (keyState == 66) // UP
-	viewState->moveCursor(1);
-    if (keyState == 65) // DOWN
-	viewState->moveCursor(-1);
-    if (keyState == 10) // ENTER
+    while (viewState->getState() != state::State::Exit)
     {
 	viewState = viewState->nextState();
     }

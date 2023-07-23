@@ -13,15 +13,12 @@ class InsertViewState : public IViewState
 public:
     InsertViewState(const ViewStateFactory& viewStateFactory, int height, int width) ;
 
-    void draw() override;
     std::shared_ptr<IViewState> nextState() override;
 private:
-    int clampedHighlightPos();
-    void readLine();
     const ViewStateFactory& viewStateFactory;
     int height;
     int width;
-    std::vector<types::Field> fields{{"--INSERT ROW--"}, {"", true}, {"Back"}};
+    std::vector<types::Field> fields{{"--INSERT ROW--"}, {"XD", true}, {"XD", true}, {"XD", true}, {"Back"}};
     int fieldCount = fields.size();
 };
 
