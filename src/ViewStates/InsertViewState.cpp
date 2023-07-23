@@ -7,10 +7,17 @@
 #include <ncursesw/menu.h>
 #include <Helpers/Size.hpp>
 #include <TextFields.hpp>
-#include <string.h>
 
 using namespace tracker::helpers;
 using tracker::text_fields::INSERT_MENU;
+
+static int TITLE_BAR_HEIGHT = 3;
+static int LEFT_OFFSET = 1;
+static int BORDER_WIDTH = 1;
+static int BORDER_OFFSET = 2 * BORDER_WIDTH;
+static int BOTTOM_BORDER_WIDTH = 1;
+static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
+
 
 namespace tracker::view::state
 {
@@ -19,7 +26,7 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
 {
     setStateEnum(State::Insert);
     scrSize = std::make_shared<Size>(height, width);
-    winSize = std::make_shared<Size>(10, 40);
+    winSize = std::make_shared<Size>(20, 60);
 
     items = (ITEM**)calloc(INSERT_MENU.size + 1, sizeof(ITEM*));
     for(int i = 0; i < INSERT_MENU.size; ++i)
@@ -27,16 +34,11 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
     items[INSERT_MENU.size] = (ITEM*)NULL;
     menu = new_menu((ITEM**)items);
 
-    window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
-    keypad(window, TRUE);
-    set_menu_win(menu, window);
-    set_menu_sub(menu, derwin(window, 6, 38, 3, 1));
-    menuBox(window);
 
     formFields = (FIELD**)calloc(4, sizeof(FIELD*));
     for(int i = 0; i < 4; ++i)
     {
-	formFields[i] = new_field(1, 10, 4 + 2*i, 18, 0, 0);
+	formFields[i] = new_field(1, winSize->x - 4, i, 1, 0, 0);
 	set_field_back(formFields[i], A_UNDERLINE);
 	field_opts_off(formFields[i], O_AUTOSKIP);
     }
@@ -44,29 +46,18 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
     field_opts_off(formFields[3], O_EDIT);
     set_field_back(formFields[3], A_NORMAL);
     form = new_form(formFields);
-}
 
-static char* trim_whitespaces(char *str)
-{
-	char *end;
 
-	// trim leading space
-	while(isspace(*str))
-		str++;
-
-	if(*str == 0) // all spaces?
-		return str;
-
-	// trim trailing space
-	end = str + strnlen(str, 128) - 1;
-
-	while(end > str && isspace(*end))
-		end--;
-
-	// write new null terminator
-	*(end+1) = '\0';
-
-	return str;
+    int rows, cols;
+    scale_form(form, &rows, &cols);
+    window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
+    // window = newwin(rows + 4, cols + 4, 4, 4);
+    keypad(window, TRUE);
+    // set_menu_win(menu, window);
+    // set_menu_sub(menu, derwin(window, 6, 38, 3, 1));
+    set_form_win(form, window);
+    set_form_sub(form, derwin(window, winSize->y - Y_USED_SPACE, winSize->x - BORDER_OFFSET, TITLE_BAR_HEIGHT, LEFT_OFFSET));
+    menuBox(window, winSize);
 }
 
 std::shared_ptr<IViewState> InsertViewState::nextState()
@@ -75,9 +66,9 @@ std::shared_ptr<IViewState> InsertViewState::nextState()
     refresh();
 
     // post_menu(menu);
-    post_form(form);
     const auto& title = INSERT_MENU.title;
     mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
+    post_form(form);
     wrefresh(window);
 
     int c;
@@ -97,11 +88,8 @@ std::shared_ptr<IViewState> InsertViewState::nextState()
 	    {
 		FIELD* curr = current_field(form);
 		const auto& name = trim_whitespaces(field_buffer(curr, 0));
-		mvprintw(0, 0, name);
-
 		if (name == INSERT_MENU.fields.back())
 		{
-		    mvprintw(1, 0, "EQUAL");
 		    return viewStateFactory.createMenuViewState();
 		}
 		break;

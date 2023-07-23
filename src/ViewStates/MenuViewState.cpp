@@ -24,14 +24,14 @@ MenuViewState::MenuViewState(
     items = (ITEM**)calloc(MAIN_MENU.size + 1, sizeof(ITEM*));
     for(int  i = 0; i < MAIN_MENU.size; ++i)
 	items[i] = new_item(MAIN_MENU.fields[i].c_str(), "");
-    items[fieldCount] = (ITEM*)NULL;
+    items[MAIN_MENU.size] = (ITEM*)NULL;
     menu = new_menu((ITEM**)items);
 
     window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
     keypad(window, TRUE);
     set_menu_win(menu, window);
     set_menu_sub(menu, derwin(window, 6, 38, 3, 1));
-    menuBox(window);
+    menuBox(window, winSize);
 }
 
 std::shared_ptr<IViewState> MenuViewState::nextState()
@@ -39,9 +39,9 @@ std::shared_ptr<IViewState> MenuViewState::nextState()
     wclear(stdscr);
     refresh();
 
-    post_menu(menu);
     const auto& title = MAIN_MENU.title;
     mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
+    post_menu(menu);
     wrefresh(window);
 
     int c;

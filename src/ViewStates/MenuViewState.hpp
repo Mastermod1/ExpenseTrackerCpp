@@ -29,8 +29,6 @@ private:
     const ViewStateFactory& viewStateFactory;
     int height;
     int width;
-    std::vector<types::Field> fields{{"--MENU--"}, {"Insert row"}, {"Display database"}, {"Exit"}};
-    int fieldCount = fields.size();
     WINDOW* window;
     ITEM** items;
     MENU* menu;
