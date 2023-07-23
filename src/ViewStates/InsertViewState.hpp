@@ -4,9 +4,11 @@
 #include <vector>
 #include <ViewStates/Types/Field.hpp>
 
-typedef struct tagMENU MENU;
 typedef struct _win_st WINDOW;
+typedef struct tagMENU MENU;
 typedef struct tagITEM ITEM;
+typedef struct formnode FORM;
+typedef struct fieldnode FIELD;
 
 namespace tracker::helpers
 {
@@ -29,11 +31,11 @@ private:
     const ViewStateFactory& viewStateFactory;
     int height;
     int width;
-    std::vector<types::Field> fields{{"--INSERT ROW--"}, {"XD", true}, {"XD", true}, {"XD", true}, {"Back"}};
-    int fieldCount = fields.size();
     WINDOW* window;
     ITEM** items;
     MENU* menu;
+    FORM* form;
+    FIELD** formFields;
     std::shared_ptr<helpers::Size> winSize;
     std::shared_ptr<helpers::Size> scrSize;
 };
