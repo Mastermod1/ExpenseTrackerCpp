@@ -5,8 +5,6 @@
 #include <ViewStates/Types/Field.hpp>
 
 typedef struct _win_st WINDOW;
-typedef struct tagMENU MENU;
-typedef struct tagITEM ITEM;
 typedef struct formnode FORM;
 typedef struct fieldnode FIELD;
 
@@ -32,8 +30,6 @@ private:
     int height;
     int width;
     WINDOW* window;
-    ITEM** items;
-    MENU* menu;
     FORM* form;
     FIELD** formFields;
     std::shared_ptr<helpers::Size> winSize;

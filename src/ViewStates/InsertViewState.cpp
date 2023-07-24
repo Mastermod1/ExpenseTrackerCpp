@@ -28,36 +28,37 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
     scrSize = std::make_shared<Size>(height, width);
     winSize = std::make_shared<Size>(20, 60);
 
-    items = (ITEM**)calloc(INSERT_MENU.size + 1, sizeof(ITEM*));
-    for(int i = 0; i < INSERT_MENU.size; ++i)
-	items[i] = new_item(INSERT_MENU.fields[i].c_str(), "");
-    items[INSERT_MENU.size] = (ITEM*)NULL;
-    menu = new_menu((ITEM**)items);
-
-
-    formFields = (FIELD**)calloc(4, sizeof(FIELD*));
-    for(int i = 0; i < 4; ++i)
+    int menuFieldCount = INSERT_MENU.size * 2 - 1;
+    formFields = (FIELD**)calloc(menuFieldCount + 1, sizeof(FIELD*));
+    int fieldName = 0;
+    for(int i = 0; i < menuFieldCount; ++i)
     {
 	formFields[i] = new_field(1, winSize->x - 4, i, 1, 0, 0);
-	set_field_back(formFields[i], A_UNDERLINE);
 	field_opts_off(formFields[i], O_AUTOSKIP);
+	if ((i + 1)%2 == 1)
+	{
+	    set_field_buffer(formFields[i], 0, INSERT_MENU.fields[fieldName].c_str());
+	    field_opts_off(formFields[i], O_EDIT);
+	    set_field_back(formFields[i], A_NORMAL);
+	    fieldName++;
+	}
+	else
+	{
+	    set_field_back(formFields[i], A_UNDERLINE);
+	}
     }
-    set_field_buffer(formFields[3], 0, INSERT_MENU.fields.back().c_str());
-    field_opts_off(formFields[3], O_EDIT);
-    set_field_back(formFields[3], A_NORMAL);
     form = new_form(formFields);
 
 
     int rows, cols;
     scale_form(form, &rows, &cols);
     window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
-    // window = newwin(rows + 4, cols + 4, 4, 4);
     keypad(window, TRUE);
-    // set_menu_win(menu, window);
-    // set_menu_sub(menu, derwin(window, 6, 38, 3, 1));
     set_form_win(form, window);
     set_form_sub(form, derwin(window, winSize->y - Y_USED_SPACE, winSize->x - BORDER_OFFSET, TITLE_BAR_HEIGHT, LEFT_OFFSET));
     menuBox(window, winSize);
+    const auto& title = INSERT_MENU.title;
+    mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
 }
 
 std::shared_ptr<IViewState> InsertViewState::nextState()
@@ -65,9 +66,6 @@ std::shared_ptr<IViewState> InsertViewState::nextState()
     wclear(stdscr);
     refresh();
 
-    // post_menu(menu);
-    const auto& title = INSERT_MENU.title;
-    mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
     post_form(form);
     wrefresh(window);
 
@@ -92,25 +90,18 @@ std::shared_ptr<IViewState> InsertViewState::nextState()
 		{
 		    return viewStateFactory.createMenuViewState();
 		}
+		if (name == INSERT_MENU.fields[INSERT_MENU.size - 2])
+		{
+		   mvprintw(0, 0, INSERT_MENU.fields[INSERT_MENU.size - 2]);
+		   mvprintw(1, 0, "%s", trim_whitespaces(field_buffer(formFields[1], 0)));
+		   mvprintw(2, 0, "%s", trim_whitespaces(field_buffer(formFields[3], 0)));
+		   mvprintw(3, 0, "%s", trim_whitespaces(field_buffer(formFields[5], 0)));
+		}
 		break;
 	    }
 	    default:
 		form_driver(form, c);
 		break;	
-	 //    case KEY_DOWN:
-		// menu_driver(menu, REQ_DOWN_ITEM);
-		// break;
-	 //    case KEY_UP:
-		// menu_driver(menu, REQ_UP_ITEM);
-		// break;
-	 //    case 10:
-		// ITEM* curr = current_item(menu);
-		// const auto& name = item_name(curr);
-		//
-		// if (name == INSERT_MENU.fields.back())
-		// {
-		//     return viewStateFactory.createMenuViewState();
-		// }
 	}
 	wrefresh(window);
     }
@@ -120,12 +111,8 @@ std::shared_ptr<IViewState> InsertViewState::nextState()
 
 InsertViewState::~InsertViewState()
 {
-    free_menu(menu);
-    for (int i = 0; i < INSERT_MENU.size; ++i)
-	free_item(items[i]);
-
     free_form(form);
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < INSERT_MENU.size * 2; ++i)
 	free_field(formFields[i]);
 
     endwin();

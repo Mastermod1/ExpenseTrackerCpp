@@ -11,5 +11,5 @@ struct Menu
 };
 
 inline static Menu MAIN_MENU{"MENU", {"INSERT DATA", "SHOW DATABASE", "EXIT"}};
-inline static Menu INSERT_MENU{"INSERT DATA", {"FIELD 1", "FIELD 2", "APPLY", "BACK"}};
+inline static Menu INSERT_MENU{"INSERT DATA", {"DATE", "DESC", "VALUE", "APPLY", "BACK"}};
 }  // namespace tracker::text_fields
