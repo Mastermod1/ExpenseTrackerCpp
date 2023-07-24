@@ -7,6 +7,8 @@
 #include <ncursesw/menu.h>
 #include <Helpers/Size.hpp>
 #include <TextFields.hpp>
+#include <TuiView.hpp>
+#include <SqlDatabase.hpp>
 
 using namespace tracker::helpers;
 using tracker::text_fields::INSERT_MENU;
@@ -61,8 +63,9 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
     mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
 }
 
-std::shared_ptr<IViewState> InsertViewState::nextState()
+std::shared_ptr<IViewState> InsertViewState::nextState(TuiView& view)
 {
+
     wclear(stdscr);
     refresh();
 
@@ -92,10 +95,15 @@ std::shared_ptr<IViewState> InsertViewState::nextState()
 		}
 		if (name == INSERT_MENU.fields[INSERT_MENU.size - 2])
 		{
-		   mvprintw(0, 0, INSERT_MENU.fields[INSERT_MENU.size - 2]);
-		   mvprintw(1, 0, "%s", trim_whitespaces(field_buffer(formFields[1], 0)));
-		   mvprintw(2, 0, "%s", trim_whitespaces(field_buffer(formFields[3], 0)));
-		   mvprintw(3, 0, "%s", trim_whitespaces(field_buffer(formFields[5], 0)));
+		    std::string values = "NULL, '";
+		    values += trim_whitespaces(field_buffer(formFields[3], 0));
+		    values += "', '";
+		    values += trim_whitespaces(field_buffer(formFields[1], 0));
+		    values += "', ";
+		    values += trim_whitespaces(field_buffer(formFields[5], 0));
+
+		    if(view.model->insert(values))
+			mvwprintw(window, winSize->y - 2, 1, "Status: %s", "SUCCESS");
 		}
 		break;
 	    }

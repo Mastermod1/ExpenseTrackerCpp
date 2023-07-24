@@ -22,7 +22,7 @@ class MenuViewState : public IViewState
 public:
     MenuViewState(const ViewStateFactory& viewStateFactory, int height, int width);
 
-    std::shared_ptr<IViewState> nextState() override;
+    std::shared_ptr<IViewState> nextState(TuiView& view) override;
 
     ~MenuViewState();
 private:

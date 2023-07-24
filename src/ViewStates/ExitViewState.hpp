@@ -16,7 +16,7 @@ public:
 	setStateEnum(State::Exit);
     }
 
-    std::shared_ptr<IViewState> nextState() override 
+    std::shared_ptr<IViewState> nextState(TuiView& view) override 
     {
 	return std::make_shared<ExitViewState>(*this);
     }

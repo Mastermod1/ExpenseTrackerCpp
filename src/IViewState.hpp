@@ -2,6 +2,11 @@
 
 #include <memory>
 
+namespace tracker::view
+{
+class TuiView;
+}  // namespace tracker::view
+
 namespace tracker::view::state
 {
 enum State{
@@ -14,7 +19,7 @@ enum State{
 class IViewState
 {
 public:
-    virtual std::shared_ptr<IViewState> nextState() = 0;
+    virtual std::shared_ptr<IViewState> nextState(TuiView& view) = 0;
 
     virtual State getState()
     {

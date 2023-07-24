@@ -28,9 +28,9 @@ public:
 
     ~TuiView();
     
-private:
     std::shared_ptr<controller::TuiController> controller;
     std::shared_ptr<database::SqlDatabase> model;
+private:
     state::IViewStatePtr viewState;
     state::ViewStateFactoryPtr viewStateFactory;
     int keyState = 0;

@@ -34,7 +34,7 @@ MenuViewState::MenuViewState(
     menuBox(window, winSize);
 }
 
-std::shared_ptr<IViewState> MenuViewState::nextState()
+std::shared_ptr<IViewState> MenuViewState::nextState(TuiView& view)
 {
     wclear(stdscr);
     refresh();

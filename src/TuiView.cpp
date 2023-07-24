@@ -28,7 +28,7 @@ void TuiView::initDisplayLoop()
     viewState = viewStateFactory->createMenuViewState();
     while (viewState->getState() != state::State::Exit)
     {
-	viewState = viewState->nextState();
+	viewState = viewState->nextState(*this);
     }
 }
 
