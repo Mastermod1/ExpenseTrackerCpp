@@ -65,10 +65,8 @@ InsertViewState::InsertViewState(const ViewStateFactory& viewStateFactory, int h
 
 std::shared_ptr<IViewState> InsertViewState::nextState(TuiView& view)
 {
-
     wclear(stdscr);
     refresh();
-
     post_form(form);
     wrefresh(window);
 
@@ -85,6 +83,10 @@ std::shared_ptr<IViewState> InsertViewState::nextState(TuiView& view)
 		form_driver(form, REQ_PREV_FIELD);
 		form_driver(form, REQ_END_LINE);
 		break;
+	    case KEY_BACKSPACE:
+		form_driver(form, REQ_LEFT_CHAR);
+		form_driver(form, REQ_DEL_CHAR);
+		break;	
 	    case 10:
 	    {
 		FIELD* curr = current_field(form);
@@ -96,11 +98,11 @@ std::shared_ptr<IViewState> InsertViewState::nextState(TuiView& view)
 		if (name == INSERT_MENU.fields[INSERT_MENU.size - 2])
 		{
 		    std::string values = "NULL, '";
-		    values += trim_whitespaces(field_buffer(formFields[3], 0));
+		    values += trim_whitespaces(field_buffer(formFields[3], 0)); // date
 		    values += "', '";
-		    values += trim_whitespaces(field_buffer(formFields[1], 0));
+		    values += trim_whitespaces(field_buffer(formFields[1], 0)); // desc
 		    values += "', ";
-		    values += trim_whitespaces(field_buffer(formFields[5], 0));
+		    values += trim_whitespaces(field_buffer(formFields[5], 0)); // value
 
 		    if(view.model->insert(values))
 			mvwprintw(window, winSize->y - 2, 1, "Status: %s", "SUCCESS");

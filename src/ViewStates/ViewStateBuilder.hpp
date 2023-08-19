@@ -3,6 +3,7 @@
 #include <ViewStates/ExitViewState.hpp>
 #include <ViewStates/MenuViewState.hpp>
 #include <ViewStates/InsertViewState.hpp>
+#include <ViewStates/DisplayDatabaseView.hpp>
 #include <IViewState.hpp>
 #include <memory>
 #include <vector>
@@ -23,6 +24,11 @@ public:
     InsertViewStatePtr createInsertViewState() const
     {
 	return std::make_shared<InsertViewState>(*this, height, width);
+    }
+
+    DisplayDatabaseViewPtr createDisplayDatabaseView() const
+    {
+	return std::make_shared<DisplayDatabaseView>(*this, height, width);
     }
 
     ExitViewStatePtr createExitViewState() const

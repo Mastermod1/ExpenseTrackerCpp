@@ -1,5 +1,6 @@
 #include "ViewStates/ViewStateBuilder.hpp"
 #include <IViewState.hpp>
+#include <functional>
 #include <ncurses.h>
 #include <ncursesw/menu.h>
 #include <Helpers/NcursesPrintHelpers.hpp>
@@ -32,15 +33,14 @@ MenuViewState::MenuViewState(
     set_menu_win(menu, window);
     set_menu_sub(menu, derwin(window, 6, 38, 3, 1));
     menuBox(window, winSize);
+    const auto& title = MAIN_MENU.title;
+    mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
 }
 
 std::shared_ptr<IViewState> MenuViewState::nextState(TuiView& view)
 {
     wclear(stdscr);
     refresh();
-
-    const auto& title = MAIN_MENU.title;
-    mvwprintw(window, 1, (winSize->x - title.length())/2, "%s",title.c_str());
     post_menu(menu);
     wrefresh(window);
 
@@ -63,6 +63,12 @@ std::shared_ptr<IViewState> MenuViewState::nextState(TuiView& view)
 		{
 		    return viewStateFactory.createInsertViewState();
 		}
+
+		if(name == MAIN_MENU.fields[1])
+		{
+		    return viewStateFactory.createDisplayDatabaseView();
+		}
+
 
 		if(name == MAIN_MENU.fields.back())
 		{

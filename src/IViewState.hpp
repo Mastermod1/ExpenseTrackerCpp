@@ -13,6 +13,7 @@ enum State{
     None,
     Menu,
     Insert,
+    Display,
     Exit
 };
 

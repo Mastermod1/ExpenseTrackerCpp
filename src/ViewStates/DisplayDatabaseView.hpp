@@ -17,14 +17,14 @@ namespace tracker::view::state
 {
 class ViewStateFactory;
 
-class MenuViewState : public IViewState
+class DisplayDatabaseView : public IViewState
 {
 public:
-    MenuViewState(const ViewStateFactory& viewStateFactory, int height, int width);
+    DisplayDatabaseView(const ViewStateFactory& viewStateFactory, int height, int width);
 
     std::shared_ptr<IViewState> nextState(TuiView& view) override;
 
-    ~MenuViewState();
+    ~DisplayDatabaseView();
 private:
     const ViewStateFactory& viewStateFactory;
     int height;
@@ -32,9 +32,10 @@ private:
     WINDOW* window;
     ITEM** items;
     MENU* menu;
+    MENU* operationMenu;
     std::shared_ptr<helpers::Size> winSize;
     std::shared_ptr<helpers::Size> scrSize;
 };
 
-using MenuViewStatePtr = std::shared_ptr<MenuViewState>;
+using DisplayDatabaseViewPtr = std::shared_ptr<DisplayDatabaseView>;
 }

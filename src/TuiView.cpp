@@ -20,7 +20,6 @@ TuiView::TuiView(
     keypad(stdscr, TRUE);
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
     viewStateFactory = std::make_shared<state::ViewStateFactory>(height, width);
-    // attron(COLOR_PAIR(1));
 }
 
 void TuiView::initDisplayLoop()
