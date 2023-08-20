@@ -5,11 +5,11 @@
 namespace tracker::datatypes {
 template <typename Data>
 class ContainerWrapper {
- public:
-  std::vector<Data> getRows() { return rows; }
+   public:
+    std::vector<Data> getRows() { return rows; }
 
-  bool isEmpty() { return rows.empty(); }
+    bool isEmpty() { return rows.empty(); }
 
-  std::vector<Data> rows;
+    std::vector<Data> rows;
 };
 }  // namespace tracker::datatypes

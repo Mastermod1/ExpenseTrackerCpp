@@ -22,93 +22,89 @@ static int BOTTOM_BORDER_WIDTH = 1;
 static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
 namespace tracker::view::state {
-InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory,
-                                 int height, int width)
+InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory, int height, int width)
     : viewStateFactory(viewStateFactory), height(height), width(width) {
-  setStateEnum(State::Insert);
-  scrSize = std::make_shared<Size>(height, width);
-  winSize = std::make_shared<Size>(20, 60);
+    setStateEnum(State::Insert);
+    scrSize = std::make_shared<Size>(height, width);
+    winSize = std::make_shared<Size>(20, 60);
 
-  window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize),
-                  scrSize->centeredXBy(*winSize));
+    window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
 
-  formFields = (FIELD **)calloc(INSERT_MENU.size + 1, sizeof(FIELD *));
-  for (int i = 0; i < INSERT_MENU.size - 2; ++i) {
-    mvwprintw(window, i * 2 + 5, 1, INSERT_MENU.fields[i].c_str());
-    formFields[i] = new_field(1, winSize->x - 4, i * 2 + 1, 1, 0, 0);
-    field_opts_off(formFields[i], O_AUTOSKIP);
-    set_field_back(formFields[i], A_UNDERLINE);
-  }
-  form = new_form(formFields);
+    formFields = (FIELD **)calloc(INSERT_MENU.size + 1, sizeof(FIELD *));
+    for (int i = 0; i < INSERT_MENU.size - 2; ++i) {
+        mvwprintw(window, i * 2 + 5, 1, INSERT_MENU.fields[i].c_str());
+        formFields[i] = new_field(1, winSize->x - 4, i * 2 + 1, 1, 0, 0);
+        field_opts_off(formFields[i], O_AUTOSKIP);
+        set_field_back(formFields[i], A_UNDERLINE);
+    }
+    form = new_form(formFields);
 
-  int rows, cols;
-  scale_form(form, &rows, &cols);
-  keypad(window, TRUE);
-  set_form_win(form, window);
-  set_form_sub(
-      form, derwin(window, winSize->y - Y_USED_SPACE,
-                   winSize->x - BORDER_OFFSET, TITLE_BAR_HEIGHT, LEFT_OFFSET));
-  menuBox(window, winSize);
-  const auto &title = INSERT_MENU.title;
-  mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
+    int rows, cols;
+    scale_form(form, &rows, &cols);
+    keypad(window, TRUE);
+    set_form_win(form, window);
+    set_form_sub(form,
+                 derwin(window, winSize->y - Y_USED_SPACE, winSize->x - BORDER_OFFSET, TITLE_BAR_HEIGHT, LEFT_OFFSET));
+    menuBox(window, winSize);
+    const auto &title = INSERT_MENU.title;
+    mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
 }
 
 std::shared_ptr<IViewState> InsertViewState::nextState(TuiView &view) {
-  wclear(stdscr);
-  refresh();
-  post_form(form);
-  wrefresh(window);
-
-  int c;
-  while ((c = getch()) != KEY_F(1)) {
-    switch (c) {
-      case KEY_DOWN:
-        form_driver(form, REQ_NEXT_FIELD);
-        form_driver(form, REQ_END_LINE);
-        break;
-      case KEY_UP:
-        form_driver(form, REQ_PREV_FIELD);
-        form_driver(form, REQ_END_LINE);
-        break;
-      case KEY_BACKSPACE:
-        form_driver(form, REQ_LEFT_CHAR);
-        form_driver(form, REQ_DEL_CHAR);
-        break;
-      case 10: {
-        FIELD *curr = current_field(form);
-        const auto &name = trim_whitespaces(field_buffer(curr, 0));
-        if (name == INSERT_MENU.fields.back()) {
-          return viewStateFactory.createMenuViewState();
-        }
-        if (name == INSERT_MENU.fields[INSERT_MENU.size - 2]) {
-          std::string values = "NULL, '";
-          values += trim_whitespaces(field_buffer(formFields[3], 0));  // date
-          values += "', '";
-          values += trim_whitespaces(field_buffer(formFields[1], 0));  // desc
-          values += "', ";
-          values += trim_whitespaces(field_buffer(formFields[5], 0));  // value
-
-          if (view.model->insert(values))
-            mvwprintw(window, winSize->y - 2, 1, "Status: %s", "SUCCESS");
-        }
-        break;
-      }
-      default:
-        form_driver(form, c);
-        break;
-    }
+    wclear(stdscr);
+    refresh();
+    post_form(form);
     wrefresh(window);
-  }
 
-  return viewStateFactory.createExitViewState();
+    int c;
+    while ((c = getch()) != KEY_F(1)) {
+        switch (c) {
+            case KEY_DOWN:
+                form_driver(form, REQ_NEXT_FIELD);
+                form_driver(form, REQ_END_LINE);
+                break;
+            case KEY_UP:
+                form_driver(form, REQ_PREV_FIELD);
+                form_driver(form, REQ_END_LINE);
+                break;
+            case KEY_BACKSPACE:
+                form_driver(form, REQ_LEFT_CHAR);
+                form_driver(form, REQ_DEL_CHAR);
+                break;
+            case 10: {
+                FIELD *curr = current_field(form);
+                const auto &name = trim_whitespaces(field_buffer(curr, 0));
+                if (name == INSERT_MENU.fields.back()) {
+                    return viewStateFactory.createMenuViewState();
+                }
+                if (name == INSERT_MENU.fields[INSERT_MENU.size - 2]) {
+                    std::string values = "NULL, '";
+                    values += trim_whitespaces(field_buffer(formFields[3], 0));  // date
+                    values += "', '";
+                    values += trim_whitespaces(field_buffer(formFields[1], 0));  // desc
+                    values += "', ";
+                    values += trim_whitespaces(field_buffer(formFields[5], 0));  // value
+
+                    if (view.model->insert(values)) mvwprintw(window, winSize->y - 2, 1, "Status: %s", "SUCCESS");
+                }
+                break;
+            }
+            default:
+                form_driver(form, c);
+                break;
+        }
+        wrefresh(window);
+    }
+
+    return viewStateFactory.createExitViewState();
 }
 
 InsertViewState::~InsertViewState() {
-  free_form(form);
-  // for (int i = 0; i < INSERT_MENU.size * 2; ++i)
-  //   free_field(formFields[i]);
+    free_form(form);
+    // for (int i = 0; i < INSERT_MENU.size * 2; ++i)
+    //   free_field(formFields[i]);
 
-  endwin();
+    endwin();
 }
 
 }  // namespace tracker::view::state

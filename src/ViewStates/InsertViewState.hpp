@@ -16,23 +16,22 @@ namespace tracker::view::state {
 class ViewStateFactory;
 
 class InsertViewState : public IViewState {
- public:
-  InsertViewState(const ViewStateFactory& viewStateFactory, int height,
-                  int width);
+   public:
+    InsertViewState(const ViewStateFactory& viewStateFactory, int height, int width);
 
-  std::shared_ptr<IViewState> nextState(TuiView& view) override;
+    std::shared_ptr<IViewState> nextState(TuiView& view) override;
 
-  ~InsertViewState();
+    ~InsertViewState();
 
- private:
-  const ViewStateFactory& viewStateFactory;
-  int height;
-  int width;
-  WINDOW* window;
-  FORM* form;
-  FIELD** formFields;
-  std::shared_ptr<helpers::Size> winSize;
-  std::shared_ptr<helpers::Size> scrSize;
+   private:
+    const ViewStateFactory& viewStateFactory;
+    int height;
+    int width;
+    WINDOW* window;
+    FORM* form;
+    FIELD** formFields;
+    std::shared_ptr<helpers::Size> winSize;
+    std::shared_ptr<helpers::Size> scrSize;
 };
 
 using InsertViewStatePtr = std::shared_ptr<InsertViewState>;

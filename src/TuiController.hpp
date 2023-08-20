@@ -9,14 +9,14 @@ class SqlDatabase;
 
 namespace tracker::controller {
 class TuiController {
- public:
-  TuiController(std::shared_ptr<database::SqlDatabase> db);
-  TuiController(TuiController* other);
+   public:
+    TuiController(std::shared_ptr<database::SqlDatabase> db);
+    TuiController(TuiController* other);
 
-  void start();
+    void start();
 
- private:
-  std::shared_ptr<view::TuiView> view;
-  std::shared_ptr<database::SqlDatabase> model;
+   private:
+    std::shared_ptr<view::TuiView> view;
+    std::shared_ptr<database::SqlDatabase> model;
 };
 }  // namespace tracker::controller

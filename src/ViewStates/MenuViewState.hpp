@@ -16,23 +16,22 @@ namespace tracker::view::state {
 class ViewStateFactory;
 
 class MenuViewState : public IViewState {
- public:
-  MenuViewState(const ViewStateFactory& viewStateFactory, int height,
-                int width);
+   public:
+    MenuViewState(const ViewStateFactory& viewStateFactory, int height, int width);
 
-  std::shared_ptr<IViewState> nextState(TuiView& view) override;
+    std::shared_ptr<IViewState> nextState(TuiView& view) override;
 
-  ~MenuViewState();
+    ~MenuViewState();
 
- private:
-  const ViewStateFactory& viewStateFactory;
-  int height;
-  int width;
-  WINDOW* window;
-  ITEM** items;
-  MENU* menu;
-  std::shared_ptr<helpers::Size> winSize;
-  std::shared_ptr<helpers::Size> scrSize;
+   private:
+    const ViewStateFactory& viewStateFactory;
+    int height;
+    int width;
+    WINDOW* window;
+    ITEM** items;
+    MENU* menu;
+    std::shared_ptr<helpers::Size> winSize;
+    std::shared_ptr<helpers::Size> scrSize;
 };
 
 using MenuViewStatePtr = std::shared_ptr<MenuViewState>;

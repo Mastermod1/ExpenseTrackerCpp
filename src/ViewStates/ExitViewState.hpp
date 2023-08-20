@@ -9,18 +9,15 @@ namespace tracker::view::state {
 class ViewStateFactory;
 
 class ExitViewState : public IViewState {
- public:
-  ExitViewState(const ViewStateFactory& viewStateFactory)
-      : viewStateFactory(viewStateFactory) {
-    setStateEnum(State::Exit);
-  }
+   public:
+    ExitViewState(const ViewStateFactory& viewStateFactory) : viewStateFactory(viewStateFactory) {
+        setStateEnum(State::Exit);
+    }
 
-  std::shared_ptr<IViewState> nextState(TuiView& view) override {
-    return std::make_shared<ExitViewState>(*this);
-  }
+    std::shared_ptr<IViewState> nextState(TuiView& view) override { return std::make_shared<ExitViewState>(*this); }
 
- private:
-  const ViewStateFactory& viewStateFactory;
+   private:
+    const ViewStateFactory& viewStateFactory;
 };
 
 using ExitViewStatePtr = std::shared_ptr<ExitViewState>;
