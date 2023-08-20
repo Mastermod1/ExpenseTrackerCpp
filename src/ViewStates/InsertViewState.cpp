@@ -32,11 +32,16 @@ InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory, int h
 
     formFields = (FIELD **)calloc(INSERT_MENU.size + 1, sizeof(FIELD *));
     for (int i = 0; i < INSERT_MENU.size - 2; ++i) {
-        mvwprintw(window, i * 2 + 5, 1, INSERT_MENU.fields[i].c_str());
         formFields[i] = new_field(1, winSize->x - 4, i * 2 + 1, 1, 0, 0);
         field_opts_off(formFields[i], O_AUTOSKIP);
         set_field_back(formFields[i], A_UNDERLINE);
     }
+
+    formFields[3] = new_field(1, winSize->x - 4, 3 * 2, 1, 0, 0);
+    set_field_buffer(formFields[3], 0, INSERT_MENU.fields[3].c_str());
+    formFields[4] = new_field(1, winSize->x - 4, 3 * 2 + 1, 1, 0, 0);
+    set_field_buffer(formFields[4], 0, INSERT_MENU.fields[4].c_str());
+
     form = new_form(formFields);
 
     int rows, cols;
@@ -54,6 +59,9 @@ std::shared_ptr<IViewState> InsertViewState::nextState(TuiView &view) {
     wclear(stdscr);
     refresh();
     post_form(form);
+    mvwprintw(window, 0 * 2 + 3, 2, INSERT_MENU.fields[0].c_str());
+    mvwprintw(window, 1 * 2 + 3, 2, INSERT_MENU.fields[1].c_str());
+    mvwprintw(window, 2 * 2 + 3, 2, INSERT_MENU.fields[2].c_str());
     wrefresh(window);
 
     int c;
@@ -77,15 +85,16 @@ std::shared_ptr<IViewState> InsertViewState::nextState(TuiView &view) {
                 if (name == INSERT_MENU.fields.back()) {
                     return viewStateFactory.createMenuViewState();
                 }
-                if (name == INSERT_MENU.fields[INSERT_MENU.size - 2]) {
+                if (name == INSERT_MENU.fields[3]) {
                     std::string values = "NULL, '";
-                    values += trim_whitespaces(field_buffer(formFields[3], 0));  // date
+                    values += trim_whitespaces(field_buffer(formFields[0], 0));  // date
                     values += "', '";
                     values += trim_whitespaces(field_buffer(formFields[1], 0));  // desc
                     values += "', ";
-                    values += trim_whitespaces(field_buffer(formFields[5], 0));  // value
+                    values += trim_whitespaces(field_buffer(formFields[2], 0));  // value
 
-                    if (view.model->insert(values)) mvwprintw(window, winSize->y - 2, 1, "Status: %s", "SUCCESS");
+                    mvwprintw(window, winSize->y - 2, 1, "Status: %s",
+                              view.model->insert(values) ? "SUCCESS" : "FAILED");
                 }
                 break;
             }
