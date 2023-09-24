@@ -54,7 +54,7 @@ DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactor
     set_menu_format(operationMenu, 1, 2);
 }
 
-std::shared_ptr<IViewState> DisplayDatabaseView::nextState(TuiView &view) {
+std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]]TuiView &view) {
     const auto x = view.model->select();
     const auto dataRows = x->getRows();
     delete x;

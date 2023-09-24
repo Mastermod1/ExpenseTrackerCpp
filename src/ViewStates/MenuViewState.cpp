@@ -33,7 +33,7 @@ MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory, int heigh
     mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
 }
 
-std::shared_ptr<IViewState> MenuViewState::nextState(TuiView& view) {
+std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& view) {
     wclear(stdscr);
     refresh();
     post_menu(menu);

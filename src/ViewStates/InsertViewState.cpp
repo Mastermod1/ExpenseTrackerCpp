@@ -55,13 +55,14 @@ InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory, int h
     mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
 }
 
-std::shared_ptr<IViewState> InsertViewState::nextState(TuiView &view) {
+std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView &view) {
     wclear(stdscr);
     refresh();
     post_form(form);
-    mvwprintw(window, 0 * 2 + 3, 2, INSERT_MENU.fields[0].c_str());
-    mvwprintw(window, 1 * 2 + 3, 2, INSERT_MENU.fields[1].c_str());
-    mvwprintw(window, 2 * 2 + 3, 2, INSERT_MENU.fields[2].c_str());
+    mvwprintw(window, 0 * 2 + 3, 2, INSERT_MENU.fields[0]);
+    mvwprintw(window, 1 * 2 + 3, 2, INSERT_MENU.fields[1]);
+    mvwprintw(window, 2 * 2 + 3, 2, INSERT_MENU.fields[2]);
+    wmove(window, 4, 2);
     wrefresh(window);
 
     int c;
@@ -110,8 +111,7 @@ std::shared_ptr<IViewState> InsertViewState::nextState(TuiView &view) {
 
 InsertViewState::~InsertViewState() {
     free_form(form);
-    // for (int i = 0; i < INSERT_MENU.size * 2; ++i)
-    //   free_field(formFields[i]);
+    for (int i = 0; i < INSERT_MENU.size + 1; ++i) free_field(formFields[i]);
 
     endwin();
 }
