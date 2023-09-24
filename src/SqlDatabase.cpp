@@ -11,7 +11,7 @@ SqlDatabase::SqlDatabase() {
                              "VALUE REAL NOT NULL);";
 
     char* errMsg;
-    int exit = sqlite3_open(databaseFileName.c_str(), &db);
+    int exit = sqlite3_open(databaseFileName.c_str(), db);
     exit = sqlite3_exec(db, tableQuery.c_str(), NULL, 0, &errMsg);
 
     if (exit != SQLITE_OK) {
@@ -27,7 +27,7 @@ bool SqlDatabase::insert(const std::string& values) {
     std::string insertQuery = "INSERT INTO " + tableName + " VALUES(" + values + ")";
 
     char* errMsg;
-    int exit = sqlite3_open(databaseFileName.c_str(), &db);
+    int exit = sqlite3_open(databaseFileName.c_str(), db);
     exit = sqlite3_exec(db, insertQuery.c_str(), NULL, 0, &errMsg);
     if (exit != SQLITE_OK) {
         std::cerr << "Error on insert: " << insertQuery << "\n" << sqlite3_errmsg(db) << "\n";
@@ -45,7 +45,7 @@ bool SqlDatabase::insert(const datatypes::Row& row) {
 void SqlDatabase::printWhole() {
     std::string query = "SELECT * FROM " + tableName;
 
-    int exit = sqlite3_open(databaseFileName.c_str(), &db);
+    int exit = sqlite3_open(databaseFileName.c_str(), db);
     const auto callback = []([[maybe_unused]] void* data, int argc, char** argv, char** azColName) {
         for (int i = 0; i < argc; i++) std::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "-");
         return 0;
@@ -63,7 +63,7 @@ datatypes::ContainerWrapper<datatypes::Row>* SqlDatabase::select() {
 
     datatypes::ContainerWrapper<datatypes::Row>* localDb = new datatypes::ContainerWrapper<datatypes::Row>();
 
-    int exit = sqlite3_open(databaseFileName.c_str(), &db);
+    int exit = sqlite3_open(databaseFileName.c_str(), db);
     const auto callback = []([[maybe_unused]] void* data, [[maybe_unused]] int argc, char** argv,
                              [[maybe_unused]] char** azColName) {
         datatypes::ContainerWrapper<datatypes::Row>* localDb = (datatypes::ContainerWrapper<datatypes::Row>*)data;
@@ -84,7 +84,7 @@ int SqlDatabase::countSelectedRows() {
     std::string countQuery = "SELECT COUNT(*) FROM " + tableName;
 
     int* count = new int(0);
-    int exit = sqlite3_open(databaseFileName.c_str(), &db);
+    int exit = sqlite3_open(databaseFileName.c_str(), db);
     const auto callback = [](void* data, int argc, char** argv, [[maybe_unused]] char** azColName) {
         if (argc != 0) *((int*)data) = std::stoi(argv[0]);
         return 0;

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <sqlite3.h>
-
+#include <Sqlite3/Sqlite3Wrapper.hpp>
 #include <Database.hpp>
 
 namespace tracker::database {
@@ -17,7 +16,7 @@ class SqlDatabase : public Database {
     bool isTableAvaiable();
 
    private:
-    sqlite3* db;
+    sqlite3_wrapper::Sqlite3Wrapper db;
     bool isTableGood = false;
     std::string tableName = "EXPENSES";
     std::string databaseFileName = "data.db";
