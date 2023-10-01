@@ -2,35 +2,33 @@
 #include <ncursesw/menu.h>
 
 #include <Helpers/NcursesPrintHelpers.hpp>
-#include <Helpers/Size.hpp>
-#include <IViewState.hpp>
+#include <ViewStates/MenuViewState.hpp>
+#include <ViewStates/ViewStateBuilder.hpp>
 #include <TextFields.hpp>
 #include <functional>
-
-#include "ViewStates/ViewStateBuilder.hpp"
 
 using namespace tracker::helpers;
 using tracker::text_fields::MAIN_MENU;
 
 namespace tracker::view::state {
 MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory, int height, int width)
-    : viewStateFactory(viewStateFactory), height(height), width(width) {
+    : viewStateFactory(viewStateFactory) {
     setStateEnum(State::Menu);
-    scrSize = std::make_shared<Size>(height, width);
-    winSize = std::make_shared<Size>(10, 40);
+    winSize = Size(10, 40);
+    scrSize = Size(height, width);
 
     items = (ITEM**)calloc(MAIN_MENU.size + 1, sizeof(ITEM*));
     for (int i = 0; i < MAIN_MENU.size; ++i) items[i] = new_item(MAIN_MENU.fields[i].c_str(), "");
     items[MAIN_MENU.size] = (ITEM*)NULL;
     menu = new_menu((ITEM**)items);
 
-    window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
+    window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));
     keypad(window, TRUE);
     set_menu_win(menu, window);
     set_menu_sub(menu, derwin(window, 6, 38, 3, 1));
     menuBox(window, winSize);
     const auto& title = MAIN_MENU.title;
-    mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
+    mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 }
 
 std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& view) {

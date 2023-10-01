@@ -1,17 +1,13 @@
 #pragma once
 
 #include <IViewState.hpp>
+#include <SqlDatabase.hpp>
+#include <ViewStates/ViewStateBuilder.hpp>
 #include <memory>
-
-#include "ViewStates/ViewStateBuilder.hpp"
-
-namespace tracker::database {
-class SqlDatabase;
-}  // namespace tracker::database
 
 namespace tracker::controller {
 class TuiController;
-}  // namespace tracker::controller
+}
 
 namespace tracker::view {
 class TuiView {
@@ -28,7 +24,7 @@ class TuiView {
 
    private:
     state::IViewStatePtr viewState;
-    state::ViewStateFactoryPtr viewStateFactory;
+    std::shared_ptr<state::ViewStateFactory> viewStateFactory;
     int keyState = 0;
     int width = 0;
     int height = 0;

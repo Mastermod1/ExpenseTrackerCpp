@@ -1,11 +1,8 @@
 #pragma once
 
+#include <SqlDatabase.hpp>
 #include <TuiView.hpp>
 #include <memory>
-
-namespace tracker::database {
-class SqlDatabase;
-}  // namespace tracker::database
 
 namespace tracker::controller {
 class TuiController {

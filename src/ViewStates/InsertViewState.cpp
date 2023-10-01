@@ -3,10 +3,10 @@
 #include <ncursesw/menu.h>
 
 #include <Helpers/NcursesPrintHelpers.hpp>
-#include <Helpers/Size.hpp>
 #include <SqlDatabase.hpp>
 #include <TextFields.hpp>
 #include <TuiView.hpp>
+#include <ViewStates/InsertViewState.hpp>
 #include <ViewStates/ViewStateBuilder.hpp>
 #include <functional>
 #include <string>
@@ -25,21 +25,21 @@ namespace tracker::view::state {
 InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory, int height, int width)
     : viewStateFactory(viewStateFactory), height(height), width(width) {
     setStateEnum(State::Insert);
-    scrSize = std::make_shared<Size>(height, width);
-    winSize = std::make_shared<Size>(20, 60);
+    scrSize = Size(height, width);
+    winSize = Size(20, 60);
 
-    window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
+    window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));
 
     formFields = (FIELD **)calloc(INSERT_MENU.size + 1, sizeof(FIELD *));
     for (int i = 0; i < INSERT_MENU.size - 2; ++i) {
-        formFields[i] = new_field(1, winSize->x - 4, i * 2 + 1, 1, 0, 0);
+        formFields[i] = new_field(1, winSize.x - 4, i * 2 + 1, 1, 0, 0);
         field_opts_off(formFields[i], O_AUTOSKIP);
         set_field_back(formFields[i], A_UNDERLINE);
     }
 
-    formFields[3] = new_field(1, winSize->x - 4, 3 * 2, 1, 0, 0);
+    formFields[3] = new_field(1, winSize.x - 4, 3 * 2, 1, 0, 0);
     set_field_buffer(formFields[3], 0, INSERT_MENU.fields[3].c_str());
-    formFields[4] = new_field(1, winSize->x - 4, 3 * 2 + 1, 1, 0, 0);
+    formFields[4] = new_field(1, winSize.x - 4, 3 * 2 + 1, 1, 0, 0);
     set_field_buffer(formFields[4], 0, INSERT_MENU.fields[4].c_str());
 
     form = new_form(formFields);
@@ -49,10 +49,10 @@ InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory, int h
     keypad(window, TRUE);
     set_form_win(form, window);
     set_form_sub(form,
-                 derwin(window, winSize->y - Y_USED_SPACE, winSize->x - BORDER_OFFSET, TITLE_BAR_HEIGHT, LEFT_OFFSET));
+                 derwin(window, winSize.y - Y_USED_SPACE, winSize.x - BORDER_OFFSET, TITLE_BAR_HEIGHT, LEFT_OFFSET));
     menuBox(window, winSize);
     const auto &title = INSERT_MENU.title;
-    mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
+    mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 }
 
 std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView &view) {
@@ -94,7 +94,7 @@ std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView 
                     values += "', ";
                     values += trim_whitespaces(field_buffer(formFields[2], 0));  // value
 
-                    mvwprintw(window, winSize->y - 2, 1, "Status: %s",
+                    mvwprintw(window, winSize.y - 2, 1, "Status: %s",
                               view.model->insert(values) ? "SUCCESS" : "FAILED");
                 }
                 break;

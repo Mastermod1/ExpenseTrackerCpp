@@ -3,13 +3,12 @@
 #include <ncursesw/menu.h>
 
 #include <Helpers/NcursesPrintHelpers.hpp>
-#include <Helpers/Size.hpp>
 #include <SqlDatabase.hpp>
 #include <TextFields.hpp>
 #include <TuiView.hpp>
+#include <ViewStates/DisplayDatabaseView.hpp>
 #include <ViewStates/ViewStateBuilder.hpp>
 #include <functional>
-#include <iterator>
 #include <string>
 
 using namespace tracker::helpers;
@@ -24,25 +23,25 @@ static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
 namespace tracker::view::state {
 DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactory, int height, int width)
-    : viewStateFactory(viewStateFactory), height(height), width(width) {
+    : viewStateFactory(viewStateFactory) {
     setStateEnum(State::Display);
-    scrSize = std::make_shared<Size>(height, width);
-    winSize = std::make_shared<Size>(20, 60);
+    winSize = Size(20, 60);
+    scrSize = Size(height, width);
 
     items = (ITEM **)calloc(26, sizeof(ITEM *));
 
     items[25] = (ITEM *)NULL;
     menu = new_menu(items);
 
-    window = newwin(winSize->y, winSize->x, scrSize->centeredYBy(*winSize), scrSize->centeredXBy(*winSize));
+    window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));
     keypad(window, TRUE);
     set_menu_win(menu, window);
     mvwprintw(window, 4, 2, "DATE\tDESCRIPTION\tVALUE");
-    set_menu_sub(menu, derwin(window, winSize->y - 6, 38, 5, 1));
+    set_menu_sub(menu, derwin(window, winSize.y - 6, 38, 5, 1));
     menu_opts_off(menu, O_SHOWDESC);
     menuBox(window, winSize);
     const auto &title = DISPLAY_MENU.title;
-    mvwprintw(window, 1, (winSize->x - title.length()) / 2, "%s", title.c_str());
+    mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 
     ITEM **subItems = (ITEM **)calloc(3, sizeof(ITEM *));
     subItems[0] = new_item("BACK", "");
@@ -50,11 +49,11 @@ DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactor
     subItems[2] = (ITEM *)NULL;
     operationMenu = new_menu(subItems);
     set_menu_win(operationMenu, window);
-    set_menu_sub(operationMenu, derwin(window, 1, winSize->x - 2, 3, 1));
+    set_menu_sub(operationMenu, derwin(window, 1, winSize.x - 2, 3, 1));
     set_menu_format(operationMenu, 1, 2);
 }
 
-std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]]TuiView &view) {
+std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiView &view) {
     const auto x = view.model->select();
     const auto dataRows = x->getRows();
     delete x;
@@ -68,7 +67,7 @@ std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]]TuiVi
         items[i] = new_item(strRows[i].c_str(), "");
     }
     set_menu_items(menu, items);
-    set_menu_format(menu, winSize->y - 6, 1);
+    set_menu_format(menu, winSize.y - 6, 1);
 
     wclear(stdscr);
     refresh();

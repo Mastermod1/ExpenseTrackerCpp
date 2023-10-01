@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Helpers/Size.hpp>
 #include <memory>
 
 namespace tracker::view {
@@ -21,6 +22,8 @@ class IViewState {
 
    protected:
     State state = State::None;
+    helpers::Size winSize{0, 0};
+    helpers::Size scrSize{0, 0};
 };
 
 using IViewStatePtr = std::shared_ptr<IViewState>;

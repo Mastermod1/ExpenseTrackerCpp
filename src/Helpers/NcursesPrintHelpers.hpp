@@ -10,6 +10,6 @@ class Size;
 
 void mvprintw(int row, int col, const std::string& s);
 void mvwprintw(WINDOW* window, int row, int col, const std::string& s);
-void menuBox(WINDOW* window, const std::shared_ptr<helpers::Size>& size);
+void menuBox(WINDOW* window, const helpers::Size& size);
 char* trim_whitespaces(char* str);
 }  // namespace tracker::helpers

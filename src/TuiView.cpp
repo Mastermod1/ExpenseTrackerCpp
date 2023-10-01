@@ -3,7 +3,7 @@
 #include <TuiView.hpp>
 #include <string>
 
-#include "IViewState.hpp"
+#include "ViewStates/ViewStateBuilder.hpp"
 
 namespace tracker::view {
 TuiView::TuiView(std::shared_ptr<controller::TuiController> controller, std::shared_ptr<database::SqlDatabase> model)

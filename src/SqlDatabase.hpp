@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Sqlite3/Sqlite3Wrapper.hpp>
 #include <Database.hpp>
+#include <Sqlite3/Sqlite3Wrapper.hpp>
 
 namespace tracker::database {
 class SqlDatabase : public Database {

@@ -9,11 +9,11 @@ void mvprintw(int row, int col, const std::string& s) { ::mvprintw(row, col, "%s
 
 void mvwprintw(WINDOW* window, int row, int col, const std::string& s) { mvwprintw(window, row, col, "%s", s.c_str()); }
 
-void menuBox(WINDOW* window, const std::shared_ptr<helpers::Size>& size) {
+void menuBox(WINDOW* window, const helpers::Size& size) {
     box(window, 0, 0);
     mvwaddch(window, 2, 0, ACS_LTEE);
-    mvwhline(window, 2, 1, ACS_HLINE, size->x - 2);
-    mvwaddch(window, 2, size->x - 1, ACS_RTEE);
+    mvwhline(window, 2, 1, ACS_HLINE, size.x - 2);
+    mvwaddch(window, 2, size.x - 1, ACS_RTEE);
 }
 
 char* trim_whitespaces(char* str) {

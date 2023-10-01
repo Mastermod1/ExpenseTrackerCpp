@@ -1,16 +1,10 @@
 #pragma once
 
 #include <IViewState.hpp>
-#include <ViewStates/Types/Field.hpp>
-#include <vector>
 
 typedef struct _win_st WINDOW;
 typedef struct tagMENU MENU;
 typedef struct tagITEM ITEM;
-
-namespace tracker::helpers {
-struct Size;
-}  // namespace tracker::helpers
 
 namespace tracker::view::state {
 class ViewStateFactory;
@@ -25,14 +19,10 @@ class DisplayDatabaseView : public IViewState {
 
    private:
     const ViewStateFactory &viewStateFactory;
-    int height;
-    int width;
     WINDOW *window;
     ITEM **items;
     MENU *menu;
     MENU *operationMenu;
-    std::shared_ptr<helpers::Size> winSize;
-    std::shared_ptr<helpers::Size> scrSize;
 };
 
 using DisplayDatabaseViewPtr = std::shared_ptr<DisplayDatabaseView>;
