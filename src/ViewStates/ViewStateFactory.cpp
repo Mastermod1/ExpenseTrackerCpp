@@ -1,11 +1,13 @@
-#include <ViewStates/ViewStateFactory.hpp>
+#include "ViewStates/ViewStateFactory.hpp"
 
-namespace tracker::view::state {
+namespace tracker::view::state
+{
 MenuViewStatePtr ViewStateFactory::createMenuViewState() const { return std::make_shared<MenuViewState>(*this); }
 
 InsertViewStatePtr ViewStateFactory::createInsertViewState() const { return std::make_shared<InsertViewState>(*this); }
 
-DisplayDatabaseViewPtr ViewStateFactory::createDisplayDatabaseView() const {
+DisplayDatabaseViewPtr ViewStateFactory::createDisplayDatabaseView() const
+{
     return std::make_shared<DisplayDatabaseView>(*this);
 }
 

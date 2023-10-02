@@ -1,20 +1,30 @@
 #pragma once
 
-#include <Helpers/Size.hpp>
 #include <ncurses.h>
+
+#include <Helpers/Size.hpp>
 #include <memory>
 
-namespace tracker::view {
+namespace tracker::view
+{
 class TuiView;
 }  // namespace tracker::view
 
-namespace tracker::view::state {
-enum State { None, Menu, Insert, Display, Exit };
+namespace tracker::view::state
+{
+enum State
+{
+    None,
+    Menu,
+    Insert,
+    Display,
+    Exit
+};
 
-class IViewState {
+class IViewState
+{
    public:
     IViewState() { getmaxyx(stdscr, scrSize.y, scrSize.x); }
-    
 
     virtual std::shared_ptr<IViewState> nextState(TuiView& view) = 0;
 

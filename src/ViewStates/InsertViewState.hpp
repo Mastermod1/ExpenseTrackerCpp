@@ -6,10 +6,12 @@ typedef struct _win_st WINDOW;
 typedef struct formnode FORM;
 typedef struct fieldnode FIELD;
 
-namespace tracker::view::state {
+namespace tracker::view::state
+{
 class ViewStateFactory;
 
-class InsertViewState : public IViewState {
+class InsertViewState : public IViewState
+{
    public:
     InsertViewState(const ViewStateFactory& viewStateFactory);
 

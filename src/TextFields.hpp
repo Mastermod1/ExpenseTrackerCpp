@@ -1,8 +1,12 @@
+#pragma once
+
 #include <string>
 #include <vector>
 
-namespace tracker::text_fields {
-struct Menu {
+namespace tracker::text_fields
+{
+struct Menu
+{
     const std::string title;
     const std::vector<std::string> fields;
     const int size = fields.size();

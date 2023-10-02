@@ -1,11 +1,14 @@
 #pragma once
 
-#include <SqlDatabase.hpp>
-#include <TuiView.hpp>
 #include <memory>
 
-namespace tracker::controller {
-class TuiController {
+#include <SqlDatabase.hpp>
+#include <TuiView.hpp>
+
+namespace tracker::controller
+{
+class TuiController
+{
    public:
     TuiController(std::shared_ptr<database::SqlDatabase> db);
     TuiController(TuiController* other);

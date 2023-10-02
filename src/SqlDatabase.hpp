@@ -3,8 +3,10 @@
 #include <Database.hpp>
 #include <Sqlite3/Sqlite3Wrapper.hpp>
 
-namespace tracker::database {
-class SqlDatabase : public Database {
+namespace tracker::database
+{
+class SqlDatabase : public Database
+{
    public:
     SqlDatabase();
 

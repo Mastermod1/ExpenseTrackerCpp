@@ -1,6 +1,7 @@
 #include <Helpers/Size.hpp>
 
-namespace tracker::helpers {
+namespace tracker::helpers
+{
 Size::Size(int y, int x) : y{y}, x{x} {}
 
 int Size::centeredXBy(const Size& s) { return (x - s.x) / 2; }

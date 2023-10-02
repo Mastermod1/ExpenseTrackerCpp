@@ -69,7 +69,7 @@ BraceWrapping:
   SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: None
 BreakBeforeConceptDeclarations: Always
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Allman
 BreakBeforeInheritanceComma: false
 BreakInheritanceList: BeforeColon
 BreakBeforeTernaryOperators: true
@@ -102,25 +102,29 @@ ForEachMacros:
 IfMacros:
   - KJ_IF_MAYBE
 IncludeBlocks:   Regroup
+IncludeIsMainRegex: '(_test)?$'
+IncludeIsMainSourceRegex: ''
 IncludeCategories:
-  - Regex:           '^<ext/.*\.h>'
+  - Regex:           '^<.*\.hpp>'
+    Priority:        3
+    SortPriority:    0
+    CaseSensitive:   false
+  - Regex:           '^<ncurses.*'
     Priority:        2
     SortPriority:    0
     CaseSensitive:   false
-  - Regex:           '^<.*\.h>'
+  - Regex:           '(^<.*\.h|hpp>|^<[a-z]*>)'
     Priority:        1
     SortPriority:    0
     CaseSensitive:   false
   - Regex:           '^<.*'
-    Priority:        2
-    SortPriority:    0
-    CaseSensitive:   false
-  - Regex:           '.*'
     Priority:        3
     SortPriority:    0
     CaseSensitive:   false
-IncludeIsMainRegex: '([-_](test|unittest))?$'
-IncludeIsMainSourceRegex: ''
+  - Regex:           '.*'
+    Priority:        4
+    SortPriority:    0
+    CaseSensitive:   false
 IndentAccessModifiers: false
 IndentCaseLabels: true
 IndentCaseBlocks: false

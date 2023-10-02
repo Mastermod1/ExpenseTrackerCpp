@@ -5,7 +5,8 @@
 
 typedef struct _win_st WINDOW;
 
-namespace tracker::helpers {
+namespace tracker::helpers
+{
 class Size;
 
 void mvprintw(int row, int col, const std::string& s);

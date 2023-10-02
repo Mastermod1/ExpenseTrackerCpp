@@ -1,18 +1,21 @@
+#include "ViewStates/MenuViewState.hpp"
+
+#include <functional>
+
 #include <ncurses.h>
 #include <ncursesw/menu.h>
 
 #include <Helpers/NcursesPrintHelpers.hpp>
-#include <ViewStates/MenuViewState.hpp>
-#include <ViewStates/ViewStateFactory.hpp>
 #include <TextFields.hpp>
-#include <functional>
+#include <ViewStates/ViewStateFactory.hpp>
 
 using namespace tracker::helpers;
 using tracker::text_fields::MAIN_MENU;
 
-namespace tracker::view::state {
-MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory)
-    : viewStateFactory(viewStateFactory) {
+namespace tracker::view::state
+{
+MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory) : viewStateFactory(viewStateFactory)
+{
     setStateEnum(State::Menu);
     winSize = Size(10, 40);
 
@@ -30,15 +33,18 @@ MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory)
     mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 }
 
-std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& view) {
+std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& view)
+{
     wclear(stdscr);
     refresh();
     post_menu(menu);
     wrefresh(window);
 
     int c;
-    while ((c = getch()) != KEY_F(1)) {
-        switch (c) {
+    while ((c = getch()) != KEY_F(1))
+    {
+        switch (c)
+        {
             case KEY_DOWN:
                 menu_driver(menu, REQ_DOWN_ITEM);
                 break;
@@ -49,15 +55,18 @@ std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& v
                 ITEM* curr = current_item(menu);
                 const auto& name = item_name(curr);
 
-                if (name == MAIN_MENU.fields[0]) {
+                if (name == MAIN_MENU.fields[0])
+                {
                     return viewStateFactory.createInsertViewState();
                 }
 
-                if (name == MAIN_MENU.fields[1]) {
+                if (name == MAIN_MENU.fields[1])
+                {
                     return viewStateFactory.createDisplayDatabaseView();
                 }
 
-                if (name == MAIN_MENU.fields.back()) {
+                if (name == MAIN_MENU.fields.back())
+                {
                     return viewStateFactory.createExitViewState();
                 }
                 break;
@@ -68,7 +77,8 @@ std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& v
     return viewStateFactory.createExitViewState();
 }
 
-MenuViewState::~MenuViewState() {
+MenuViewState::~MenuViewState()
+{
     free_menu(menu);
     for (int i = 0; i < MAIN_MENU.size; ++i) free_item(items[i]);
 

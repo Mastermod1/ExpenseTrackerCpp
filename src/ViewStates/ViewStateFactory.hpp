@@ -1,13 +1,16 @@
 #pragma once
 
+#include <memory>
+
 #include <ViewStates/DisplayDatabaseView.hpp>
 #include <ViewStates/ExitViewState.hpp>
 #include <ViewStates/InsertViewState.hpp>
 #include <ViewStates/MenuViewState.hpp>
-#include <memory>
 
-namespace tracker::view::state {
-class ViewStateFactory {
+namespace tracker::view::state
+{
+class ViewStateFactory
+{
    public:
     std::shared_ptr<MenuViewState> createMenuViewState() const;
 

@@ -6,10 +6,12 @@ typedef struct _win_st WINDOW;
 typedef struct tagMENU MENU;
 typedef struct tagITEM ITEM;
 
-namespace tracker::view::state {
+namespace tracker::view::state
+{
 class ViewStateFactory;
 
-class DisplayDatabaseView : public IViewState {
+class DisplayDatabaseView : public IViewState
+{
    public:
     DisplayDatabaseView(const ViewStateFactory &viewStateFactory);
 

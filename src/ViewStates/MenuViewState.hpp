@@ -1,16 +1,19 @@
 #pragma once
 
-#include <IViewState.hpp>
 #include <memory>
+
+#include <IViewState.hpp>
 
 typedef struct _win_st WINDOW;
 typedef struct tagMENU MENU;
 typedef struct tagITEM ITEM;
 
-namespace tracker::view::state {
+namespace tracker::view::state
+{
 class ViewStateFactory;
 
-class MenuViewState : public IViewState {
+class MenuViewState : public IViewState
+{
    public:
     MenuViewState(const ViewStateFactory& viewStateFactory);
 

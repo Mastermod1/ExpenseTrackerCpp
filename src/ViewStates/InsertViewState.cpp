@@ -1,3 +1,8 @@
+#include "ViewStates/InsertViewState.hpp"
+
+#include <functional>
+#include <string>
+
 #include <ncurses.h>
 #include <ncursesw/form.h>
 #include <ncursesw/menu.h>
@@ -6,10 +11,7 @@
 #include <SqlDatabase.hpp>
 #include <TextFields.hpp>
 #include <TuiView.hpp>
-#include <ViewStates/InsertViewState.hpp>
 #include <ViewStates/ViewStateFactory.hpp>
-#include <functional>
-#include <string>
 
 using namespace tracker::helpers;
 using tracker::text_fields::INSERT_MENU;
@@ -21,16 +23,18 @@ static int BORDER_OFFSET = 2 * BORDER_WIDTH;
 static int BOTTOM_BORDER_WIDTH = 1;
 static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
-namespace tracker::view::state {
-InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory)
-    : viewStateFactory(viewStateFactory) {
+namespace tracker::view::state
+{
+InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory) : viewStateFactory(viewStateFactory)
+{
     setStateEnum(State::Insert);
     winSize = Size(20, 60);
 
     window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));
 
     formFields = (FIELD **)calloc(INSERT_MENU.size + 1, sizeof(FIELD *));
-    for (int i = 0; i < INSERT_MENU.size - 2; ++i) {
+    for (int i = 0; i < INSERT_MENU.size - 2; ++i)
+    {
         formFields[i] = new_field(1, winSize.x - 4, i * 2 + 1, 1, 0, 0);
         field_opts_off(formFields[i], O_AUTOSKIP);
         set_field_back(formFields[i], A_UNDERLINE);
@@ -54,7 +58,8 @@ InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory)
     mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 }
 
-std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView &view) {
+std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView &view)
+{
     wclear(stdscr);
     refresh();
     post_form(form);
@@ -65,8 +70,10 @@ std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView 
     wrefresh(window);
 
     int c;
-    while ((c = getch()) != KEY_F(1)) {
-        switch (c) {
+    while ((c = getch()) != KEY_F(1))
+    {
+        switch (c)
+        {
             case KEY_DOWN:
                 form_driver(form, REQ_NEXT_FIELD);
                 form_driver(form, REQ_END_LINE);
@@ -79,13 +86,16 @@ std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView 
                 form_driver(form, REQ_LEFT_CHAR);
                 form_driver(form, REQ_DEL_CHAR);
                 break;
-            case 10: {
+            case 10:
+            {
                 FIELD *curr = current_field(form);
                 const auto &name = trim_whitespaces(field_buffer(curr, 0));
-                if (name == INSERT_MENU.fields.back()) {
+                if (name == INSERT_MENU.fields.back())
+                {
                     return viewStateFactory.createMenuViewState();
                 }
-                if (name == INSERT_MENU.fields[3]) {
+                if (name == INSERT_MENU.fields[3])
+                {
                     std::string values = "NULL, '";
                     values += trim_whitespaces(field_buffer(formFields[0], 0));  // date
                     values += "', '";
@@ -108,7 +118,8 @@ std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView 
     return viewStateFactory.createExitViewState();
 }
 
-InsertViewState::~InsertViewState() {
+InsertViewState::~InsertViewState()
+{
     free_form(form);
     for (int i = 0; i < INSERT_MENU.size + 1; ++i) free_field(formFields[i]);
 

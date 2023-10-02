@@ -2,8 +2,10 @@
 
 #include <sqlite3.h>
 
-namespace tracker::database::sqlite3_wrapper {
-class Sqlite3Wrapper {
+namespace tracker::database::sqlite3_wrapper
+{
+class Sqlite3Wrapper
+{
    public:
     operator sqlite3*() { return impl; }
 

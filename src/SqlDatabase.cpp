@@ -1,8 +1,11 @@
-#include <SqlDatabase.hpp>
+#include "SqlDatabase.hpp"
+
 #include <iostream>
 
-namespace tracker::database {
-SqlDatabase::SqlDatabase() {
+namespace tracker::database
+{
+SqlDatabase::SqlDatabase()
+{
     std::string tableQuery = "CREATE TABLE IF NOT EXISTS " + tableName +
                              "("
                              "ID INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -14,22 +17,27 @@ SqlDatabase::SqlDatabase() {
     int exit = sqlite3_open(databaseFileName.c_str(), db);
     exit = sqlite3_exec(db, tableQuery.c_str(), NULL, 0, &errMsg);
 
-    if (exit != SQLITE_OK) {
+    if (exit != SQLITE_OK)
+    {
         std::cerr << "Error: Could not open database and create table\n";
         sqlite3_free(errMsg);
-    } else {
+    }
+    else
+    {
         isTableGood = true;
     }
     sqlite3_close(db);
 }
 
-bool SqlDatabase::insert(const std::string& values) {
+bool SqlDatabase::insert(const std::string& values)
+{
     std::string insertQuery = "INSERT INTO " + tableName + " VALUES(" + values + ")";
 
     char* errMsg;
     int exit = sqlite3_open(databaseFileName.c_str(), db);
     exit = sqlite3_exec(db, insertQuery.c_str(), NULL, 0, &errMsg);
-    if (exit != SQLITE_OK) {
+    if (exit != SQLITE_OK)
+    {
         std::cerr << "Error on insert: " << insertQuery << "\n" << sqlite3_errmsg(db) << "\n";
         sqlite3_free(errMsg);
     }
@@ -38,15 +46,18 @@ bool SqlDatabase::insert(const std::string& values) {
     return exit == SQLITE_OK;
 }
 
-bool SqlDatabase::insert(const datatypes::Row& row) {
+bool SqlDatabase::insert(const datatypes::Row& row)
+{
     return insert("NULL, '" + row.name + "', '" + row.date + "', " + std::to_string(row.cash));
 }
 
-void SqlDatabase::printWhole() {
+void SqlDatabase::printWhole()
+{
     std::string query = "SELECT * FROM " + tableName;
 
     int exit = sqlite3_open(databaseFileName.c_str(), db);
-    const auto callback = []([[maybe_unused]] void* data, int argc, char** argv, char** azColName) {
+    const auto callback = []([[maybe_unused]] void* data, int argc, char** argv, char** azColName)
+    {
         for (int i = 0; i < argc; i++) std::printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "-");
         return 0;
     };
@@ -58,14 +69,16 @@ void SqlDatabase::printWhole() {
     sqlite3_close(db);
 }
 
-datatypes::ContainerWrapper<datatypes::Row>* SqlDatabase::select() {
+datatypes::ContainerWrapper<datatypes::Row>* SqlDatabase::select()
+{
     std::string query = "SELECT * FROM " + tableName;
 
     datatypes::ContainerWrapper<datatypes::Row>* localDb = new datatypes::ContainerWrapper<datatypes::Row>();
 
     int exit = sqlite3_open(databaseFileName.c_str(), db);
-    const auto callback = []([[maybe_unused]] void* data, [[maybe_unused]] int argc, char** argv,
-                             [[maybe_unused]] char** azColName) {
+    const auto callback =
+        []([[maybe_unused]] void* data, [[maybe_unused]] int argc, char** argv, [[maybe_unused]] char** azColName)
+    {
         datatypes::ContainerWrapper<datatypes::Row>* localDb = (datatypes::ContainerWrapper<datatypes::Row>*)data;
         localDb->rows.push_back({argv[1], argv[2], std::stof(argv[3])});
         return 0;
@@ -80,12 +93,14 @@ datatypes::ContainerWrapper<datatypes::Row>* SqlDatabase::select() {
     return localDb;
 }
 
-int SqlDatabase::countSelectedRows() {
+int SqlDatabase::countSelectedRows()
+{
     std::string countQuery = "SELECT COUNT(*) FROM " + tableName;
 
     int* count = new int(0);
     int exit = sqlite3_open(databaseFileName.c_str(), db);
-    const auto callback = [](void* data, int argc, char** argv, [[maybe_unused]] char** azColName) {
+    const auto callback = [](void* data, int argc, char** argv, [[maybe_unused]] char** azColName)
+    {
         if (argc != 0) *((int*)data) = std::stoi(argv[0]);
         return 0;
     };

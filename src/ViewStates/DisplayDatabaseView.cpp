@@ -1,3 +1,8 @@
+#include "ViewStates/DisplayDatabaseView.hpp"
+
+#include <functional>
+#include <string>
+
 #include <ncurses.h>
 #include <ncursesw/form.h>
 #include <ncursesw/menu.h>
@@ -6,10 +11,7 @@
 #include <SqlDatabase.hpp>
 #include <TextFields.hpp>
 #include <TuiView.hpp>
-#include <ViewStates/DisplayDatabaseView.hpp>
 #include <ViewStates/ViewStateFactory.hpp>
-#include <functional>
-#include <string>
 
 using namespace tracker::helpers;
 using tracker::text_fields::DISPLAY_MENU;
@@ -21,9 +23,10 @@ static int BORDER_OFFSET = 2 * BORDER_WIDTH;
 static int BOTTOM_BORDER_WIDTH = 1;
 static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
-namespace tracker::view::state {
-DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactory)
-    : viewStateFactory(viewStateFactory) {
+namespace tracker::view::state
+{
+DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactory) : viewStateFactory(viewStateFactory)
+{
     setStateEnum(State::Display);
     winSize = Size(20, 60);
 
@@ -52,17 +55,20 @@ DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactor
     set_menu_format(operationMenu, 1, 2);
 }
 
-std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiView &view) {
+std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiView &view)
+{
     const auto x = view.model->select();
     const auto dataRows = x->getRows();
     delete x;
 
     std::vector<std::string> strRows;
-    for (size_t i = 0; i < dataRows.size(); ++i) {
+    for (size_t i = 0; i < dataRows.size(); ++i)
+    {
         strRows.push_back(dataRows[i].date + "    " + dataRows[i].name + "    " + std::to_string(dataRows[i].cash));
     }
 
-    for (size_t i = 0; i < dataRows.size(); ++i) {
+    for (size_t i = 0; i < dataRows.size(); ++i)
+    {
         items[i] = new_item(strRows[i].c_str(), "");
     }
     set_menu_items(menu, items);
@@ -75,8 +81,10 @@ std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiV
     wrefresh(window);
 
     int c;
-    while ((c = getch()) != KEY_F(1)) {
-        switch (c) {
+    while ((c = getch()) != KEY_F(1))
+    {
+        switch (c)
+        {
             case KEY_DOWN:
                 menu_driver(menu, REQ_DOWN_ITEM);
                 break;
@@ -92,7 +100,8 @@ std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiV
             case 10:
                 ITEM *curr = current_item(operationMenu);
                 const auto &name = item_name(curr);
-                if (name == std::string("BACK")) {
+                if (name == std::string("BACK"))
+                {
                     return viewStateFactory.createMenuViewState();
                 }
                 break;
@@ -103,7 +112,8 @@ std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiV
     return viewStateFactory.createExitViewState();
 }
 
-DisplayDatabaseView::~DisplayDatabaseView() {
+DisplayDatabaseView::~DisplayDatabaseView()
+{
     free_menu(menu);
     for (int i = 0; i < DISPLAY_MENU.size; ++i) free_item(items[i]);
 

@@ -1,5 +1,9 @@
-namespace tracker::helpers {
-class Size {
+#pragma once
+
+namespace tracker::helpers
+{
+class Size
+{
    public:
     Size(int y, int x);
 
