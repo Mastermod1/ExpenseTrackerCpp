@@ -7,7 +7,7 @@
 #include <TextFields.hpp>
 #include <TuiView.hpp>
 #include <ViewStates/InsertViewState.hpp>
-#include <ViewStates/ViewStateBuilder.hpp>
+#include <ViewStates/ViewStateFactory.hpp>
 #include <functional>
 #include <string>
 
@@ -22,10 +22,9 @@ static int BOTTOM_BORDER_WIDTH = 1;
 static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
 namespace tracker::view::state {
-InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory, int height, int width)
-    : viewStateFactory(viewStateFactory), height(height), width(width) {
+InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory)
+    : viewStateFactory(viewStateFactory) {
     setStateEnum(State::Insert);
-    scrSize = Size(height, width);
     winSize = Size(20, 60);
 
     window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));

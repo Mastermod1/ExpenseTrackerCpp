@@ -11,7 +11,7 @@ class ViewStateFactory;
 
 class InsertViewState : public IViewState {
    public:
-    InsertViewState(const ViewStateFactory& viewStateFactory, int height, int width);
+    InsertViewState(const ViewStateFactory& viewStateFactory);
 
     std::shared_ptr<IViewState> nextState(TuiView& view) override;
 
@@ -19,8 +19,6 @@ class InsertViewState : public IViewState {
 
    private:
     const ViewStateFactory& viewStateFactory;
-    int height;
-    int width;
     WINDOW* window;
     FORM* form;
     FIELD** formFields;

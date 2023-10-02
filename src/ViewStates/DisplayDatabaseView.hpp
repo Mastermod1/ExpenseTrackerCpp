@@ -11,7 +11,7 @@ class ViewStateFactory;
 
 class DisplayDatabaseView : public IViewState {
    public:
-    DisplayDatabaseView(const ViewStateFactory &viewStateFactory, int height, int width);
+    DisplayDatabaseView(const ViewStateFactory &viewStateFactory);
 
     std::shared_ptr<IViewState> nextState(TuiView &view) override;
 

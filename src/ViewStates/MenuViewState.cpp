@@ -3,7 +3,7 @@
 
 #include <Helpers/NcursesPrintHelpers.hpp>
 #include <ViewStates/MenuViewState.hpp>
-#include <ViewStates/ViewStateBuilder.hpp>
+#include <ViewStates/ViewStateFactory.hpp>
 #include <TextFields.hpp>
 #include <functional>
 
@@ -11,11 +11,10 @@ using namespace tracker::helpers;
 using tracker::text_fields::MAIN_MENU;
 
 namespace tracker::view::state {
-MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory, int height, int width)
+MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory)
     : viewStateFactory(viewStateFactory) {
     setStateEnum(State::Menu);
     winSize = Size(10, 40);
-    scrSize = Size(height, width);
 
     items = (ITEM**)calloc(MAIN_MENU.size + 1, sizeof(ITEM*));
     for (int i = 0; i < MAIN_MENU.size; ++i) items[i] = new_item(MAIN_MENU.fields[i].c_str(), "");

@@ -7,7 +7,7 @@
 #include <TextFields.hpp>
 #include <TuiView.hpp>
 #include <ViewStates/DisplayDatabaseView.hpp>
-#include <ViewStates/ViewStateBuilder.hpp>
+#include <ViewStates/ViewStateFactory.hpp>
 #include <functional>
 #include <string>
 
@@ -22,11 +22,10 @@ static int BOTTOM_BORDER_WIDTH = 1;
 static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
 namespace tracker::view::state {
-DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactory, int height, int width)
+DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactory)
     : viewStateFactory(viewStateFactory) {
     setStateEnum(State::Display);
     winSize = Size(20, 60);
-    scrSize = Size(height, width);
 
     items = (ITEM **)calloc(26, sizeof(ITEM *));
 
@@ -93,7 +92,7 @@ std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiV
             case 10:
                 ITEM *curr = current_item(operationMenu);
                 const auto &name = item_name(curr);
-                if (name == "BACK") {
+                if (name == std::string("BACK")) {
                     return viewStateFactory.createMenuViewState();
                 }
                 break;

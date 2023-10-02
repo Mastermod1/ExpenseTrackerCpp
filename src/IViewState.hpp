@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Helpers/Size.hpp>
+#include <ncurses.h>
 #include <memory>
 
 namespace tracker::view {
@@ -12,6 +13,9 @@ enum State { None, Menu, Insert, Display, Exit };
 
 class IViewState {
    public:
+    IViewState() { getmaxyx(stdscr, scrSize.y, scrSize.x); }
+    
+
     virtual std::shared_ptr<IViewState> nextState(TuiView& view) = 0;
 
     virtual State getState() { return state; }

@@ -9,8 +9,6 @@
 namespace tracker::view::state {
 class ViewStateFactory {
    public:
-    ViewStateFactory(int height, int width);
-
     std::shared_ptr<MenuViewState> createMenuViewState() const;
 
     std::shared_ptr<InsertViewState> createInsertViewState() const;
@@ -18,10 +16,6 @@ class ViewStateFactory {
     std::shared_ptr<DisplayDatabaseView> createDisplayDatabaseView() const;
 
     std::shared_ptr<ExitViewState> createExitViewState() const;
-
-   private:
-    int height = 0;
-    int width = 0;
 };
 
 using ViewStateFactoryPtr = std::shared_ptr<ViewStateFactory>;

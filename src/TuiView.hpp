@@ -2,7 +2,7 @@
 
 #include <IViewState.hpp>
 #include <SqlDatabase.hpp>
-#include <ViewStates/ViewStateBuilder.hpp>
+#include <ViewStates/ViewStateFactory.hpp>
 #include <memory>
 
 namespace tracker::controller {
@@ -26,8 +26,6 @@ class TuiView {
     state::IViewStatePtr viewState;
     std::shared_ptr<state::ViewStateFactory> viewStateFactory;
     int keyState = 0;
-    int width = 0;
-    int height = 0;
 };
 
 }  // namespace tracker::view
