@@ -27,7 +27,7 @@ namespace tracker::view::state
 {
 InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory) : viewStateFactory(viewStateFactory)
 {
-    setStateEnum(State::Insert);
+    state = State::Insert;
     winSize = Size(20, 60);
 
     window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));
@@ -58,7 +58,7 @@ InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory) : vie
     mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 }
 
-std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView &view)
+void InsertViewState::render(TuiView &view)
 {
     wclear(stdscr);
     refresh();
@@ -92,7 +92,8 @@ std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView 
                 const auto &name = trim_whitespaces(field_buffer(curr, 0));
                 if (name == INSERT_MENU.fields.back())
                 {
-                    return viewStateFactory.createMenuViewState();
+                    view.changeState(viewStateFactory.createMenuViewState());
+                    return;
                 }
                 if (name == INSERT_MENU.fields[3])
                 {
@@ -114,8 +115,6 @@ std::shared_ptr<IViewState> InsertViewState::nextState([[maybe_unused]] TuiView 
         }
         wrefresh(window);
     }
-
-    return viewStateFactory.createExitViewState();
 }
 
 InsertViewState::~InsertViewState()

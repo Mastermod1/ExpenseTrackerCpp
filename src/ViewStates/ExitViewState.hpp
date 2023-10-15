@@ -11,15 +11,9 @@ class ViewStateFactory;
 class ExitViewState : public IViewState
 {
    public:
-    ExitViewState(const ViewStateFactory& viewStateFactory) : viewStateFactory(viewStateFactory)
-    {
-        setStateEnum(State::Exit);
-    }
+    ExitViewState(const ViewStateFactory& viewStateFactory);
 
-    std::shared_ptr<IViewState> nextState([[maybe_unused]] TuiView& view) override
-    {
-        return std::make_shared<ExitViewState>(*this);
-    }
+    void render(TuiView& view) override;
 
    private:
     const ViewStateFactory& viewStateFactory;

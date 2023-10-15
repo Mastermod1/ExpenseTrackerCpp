@@ -7,6 +7,7 @@
 
 #include <Helpers/NcursesPrintHelpers.hpp>
 #include <TextFields.hpp>
+#include <TuiView.hpp>
 #include <ViewStates/ViewStateFactory.hpp>
 
 using namespace tracker::helpers;
@@ -16,7 +17,7 @@ namespace tracker::view::state
 {
 MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory) : viewStateFactory(viewStateFactory)
 {
-    setStateEnum(State::Menu);
+    state = State::Menu;
     winSize = Size(10, 40);
 
     items = (ITEM**)calloc(MAIN_MENU.size + 1, sizeof(ITEM*));
@@ -33,7 +34,7 @@ MenuViewState::MenuViewState(const ViewStateFactory& viewStateFactory) : viewSta
     mvwprintw(window, 1, (winSize.x - title.length()) / 2, "%s", title.c_str());
 }
 
-std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& view)
+void MenuViewState::render(TuiView& view)
 {
     wclear(stdscr);
     refresh();
@@ -57,24 +58,25 @@ std::shared_ptr<IViewState> MenuViewState::nextState([[maybe_unused]] TuiView& v
 
                 if (name == MAIN_MENU.fields[0])
                 {
-                    return viewStateFactory.createInsertViewState();
+                    view.changeState(viewStateFactory.createInsertViewState());
+                    return;
                 }
 
                 if (name == MAIN_MENU.fields[1])
                 {
-                    return viewStateFactory.createDisplayDatabaseView();
+                    view.changeState(viewStateFactory.createDisplayDatabaseView());
+                    return;
                 }
 
                 if (name == MAIN_MENU.fields.back())
                 {
-                    return viewStateFactory.createExitViewState();
+                    view.changeState(viewStateFactory.createExitViewState());
+                    return;
                 }
                 break;
         }
         wrefresh(window);
     }
-
-    return viewStateFactory.createExitViewState();
 }
 
 MenuViewState::~MenuViewState()

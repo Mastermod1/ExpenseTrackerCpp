@@ -20,6 +20,7 @@ class TuiView
 
     void initDisplayLoop();
     void handleControls();
+    void changeState(state::IViewStatePtr state);
 
     ~TuiView();
 

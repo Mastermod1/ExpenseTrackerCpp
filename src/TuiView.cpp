@@ -1,8 +1,9 @@
+#include "TuiView.hpp"
+
 #include <memory>
 #include <string>
 
 #include <NcursesViewSetuper.hpp>
-#include <TuiView.hpp>
 
 namespace tracker::view
 {
@@ -17,9 +18,11 @@ void TuiView::initDisplayLoop()
     viewState = viewStateFactory->createMenuViewState();
     while (viewState->getState() != state::State::Exit)
     {
-        viewState = viewState->nextState(*this);
+        viewState->render(*this);
     }
 }
+
+void TuiView::changeState(const state::IViewStatePtr state) { viewState = state; }
 
 TuiView::~TuiView() { endwin(); }
 }  // namespace tracker::view

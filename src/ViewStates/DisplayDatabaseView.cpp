@@ -27,7 +27,7 @@ namespace tracker::view::state
 {
 DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactory) : viewStateFactory(viewStateFactory)
 {
-    setStateEnum(State::Display);
+    state = State::Display;
     winSize = Size(20, 60);
 
     items = (ITEM **)calloc(26, sizeof(ITEM *));
@@ -55,7 +55,7 @@ DisplayDatabaseView::DisplayDatabaseView(const ViewStateFactory &viewStateFactor
     set_menu_format(operationMenu, 1, 2);
 }
 
-std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiView &view)
+void DisplayDatabaseView::render(TuiView &view)
 {
     const auto x = view.model->select();
     const auto dataRows = x->getRows();
@@ -102,14 +102,13 @@ std::shared_ptr<IViewState> DisplayDatabaseView::nextState([[maybe_unused]] TuiV
                 const auto &name = item_name(curr);
                 if (name == std::string("BACK"))
                 {
-                    return viewStateFactory.createMenuViewState();
+                    view.changeState(viewStateFactory.createMenuViewState());
+                    return;
                 }
                 break;
         }
         wrefresh(window);
     }
-
-    return viewStateFactory.createExitViewState();
 }
 
 DisplayDatabaseView::~DisplayDatabaseView()

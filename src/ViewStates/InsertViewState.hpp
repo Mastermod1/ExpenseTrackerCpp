@@ -15,7 +15,7 @@ class InsertViewState : public IViewState
    public:
     InsertViewState(const ViewStateFactory& viewStateFactory);
 
-    std::shared_ptr<IViewState> nextState(TuiView& view) override;
+    void render(TuiView& view) override;
 
     ~InsertViewState();
 
