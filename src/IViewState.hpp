@@ -35,7 +35,7 @@ class IViewState
 
    protected:
     State state = State::None;
-    helpers::Size winSize{0, 0};
+    helpers::Size winSize{20, 60};
     helpers::Size scrSize{0, 0};
 };
 

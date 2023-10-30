@@ -29,8 +29,7 @@ class TuiView
 
    private:
     state::IViewStatePtr viewState;
-    std::shared_ptr<state::ViewStateFactory> viewStateFactory;
-    int keyState = 0;
+    state::ViewStateFactoryPtr viewStateFactory;
 };
 
 }  // namespace tracker::view

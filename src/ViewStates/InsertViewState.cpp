@@ -8,6 +8,7 @@
 #include <ncursesw/menu.h>
 
 #include <Helpers/NcursesPrintHelpers.hpp>
+#include <Ncurses/WindowWrapper.hpp>
 #include <SqlDatabase.hpp>
 #include <TextFields.hpp>
 #include <TuiView.hpp>
@@ -25,12 +26,11 @@ static int Y_USED_SPACE = TITLE_BAR_HEIGHT + BOTTOM_BORDER_WIDTH;
 
 namespace tracker::view::state
 {
-InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory) : viewStateFactory(viewStateFactory)
+InsertViewState::InsertViewState(const ViewStateFactory &viewStateFactory)
+    : viewStateFactory(viewStateFactory),
+      window(20, 60, scrSize.centeredYBy(Size(20, 60)), scrSize.centeredXBy(Size(20, 60)))
 {
     state = State::Insert;
-    winSize = Size(20, 60);
-
-    window = newwin(winSize.y, winSize.x, scrSize.centeredYBy(winSize), scrSize.centeredXBy(winSize));
 
     formFields = (FIELD **)calloc(INSERT_MENU.size + 1, sizeof(FIELD *));
     for (int i = 0; i < INSERT_MENU.size - 2; ++i)
@@ -121,8 +121,6 @@ InsertViewState::~InsertViewState()
 {
     free_form(form);
     for (int i = 0; i < INSERT_MENU.size + 1; ++i) free_field(formFields[i]);
-
-    endwin();
 }
 
 }  // namespace tracker::view::state

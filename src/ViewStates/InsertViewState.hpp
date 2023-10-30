@@ -6,6 +6,8 @@ typedef struct _win_st WINDOW;
 typedef struct formnode FORM;
 typedef struct fieldnode FIELD;
 
+#include "Ncurses/WindowWrapper.hpp"
+
 namespace tracker::view::state
 {
 class ViewStateFactory;
@@ -21,7 +23,7 @@ class InsertViewState : public IViewState
 
    private:
     const ViewStateFactory& viewStateFactory;
-    WINDOW* window;
+    ncurses::window_wrapper::WindowWrapper window;
     FORM* form;
     FIELD** formFields;
 };
